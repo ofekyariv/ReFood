@@ -1,0 +1,332 @@
+<html>
+<head>
+<title>AddFood.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #0033b3;}
+.s1 { color: #080808;}
+.s2 { color: #1750eb;}
+.s3 { color: #067d17;}
+.s4 { color: #8c8c8c; font-style: italic;}
+</style>
+</head>
+<body bgcolor="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+AddFood.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.example.finalapp;</span>
+
+<span class="s0">import </span><span class="s1">androidx.annotation.NonNull;</span>
+<span class="s0">import </span><span class="s1">androidx.annotation.Nullable;</span>
+<span class="s0">import </span><span class="s1">androidx.annotation.RequiresApi;</span>
+<span class="s0">import </span><span class="s1">androidx.appcompat.app.AppCompatActivity;</span>
+
+<span class="s0">import </span><span class="s1">android.app.DatePickerDialog;</span>
+<span class="s0">import </span><span class="s1">android.app.ProgressDialog;</span>
+<span class="s0">import </span><span class="s1">android.content.Intent;</span>
+<span class="s0">import </span><span class="s1">android.database.Cursor;</span>
+<span class="s0">import </span><span class="s1">android.net.Uri;</span>
+<span class="s0">import </span><span class="s1">android.os.Build;</span>
+<span class="s0">import </span><span class="s1">android.os.Bundle;</span>
+<span class="s0">import </span><span class="s1">android.provider.MediaStore;</span>
+<span class="s0">import </span><span class="s1">android.view.Menu;</span>
+<span class="s0">import </span><span class="s1">android.view.MenuInflater;</span>
+<span class="s0">import </span><span class="s1">android.view.MenuItem;</span>
+<span class="s0">import </span><span class="s1">android.view.View;</span>
+<span class="s0">import </span><span class="s1">android.widget.Button;</span>
+<span class="s0">import </span><span class="s1">android.widget.DatePicker;</span>
+<span class="s0">import </span><span class="s1">android.widget.EditText;</span>
+<span class="s0">import </span><span class="s1">android.widget.ImageButton;</span>
+<span class="s0">import </span><span class="s1">android.widget.Spinner;</span>
+<span class="s0">import </span><span class="s1">android.widget.TextView;</span>
+<span class="s0">import </span><span class="s1">android.widget.Toast;</span>
+
+<span class="s0">import </span><span class="s1">com.google.android.gms.tasks.OnFailureListener;</span>
+<span class="s0">import </span><span class="s1">com.google.android.gms.tasks.OnSuccessListener;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.auth.FirebaseAuth;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.DataSnapshot;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.DatabaseError;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.DatabaseReference;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.FirebaseDatabase;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.ValueEventListener;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.storage.FirebaseStorage;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.storage.StorageReference;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.storage.UploadTask;</span>
+
+<span class="s0">import </span><span class="s1">java.text.SimpleDateFormat;</span>
+<span class="s0">import </span><span class="s1">java.util.Calendar;</span>
+
+<span class="s0">import </span><span class="s1">de.hdodenhof.circleimageview.CircleImageView;</span>
+
+<span class="s0">public class </span><span class="s1">AddFood </span><span class="s0">extends </span><span class="s1">AppCompatActivity {</span>
+
+    <span class="s0">public static final int </span><span class="s1">PICK_IMAGE=</span><span class="s2">1</span><span class="s1">;</span>
+    <span class="s0">private </span><span class="s1">Spinner spnkid;</span>
+
+    <span class="s0">private </span><span class="s1">EditText editfoodname, editdescription, num;</span>
+    <span class="s0">private </span><span class="s1">TextView txtexpdate;</span>
+
+     <span class="s0">private </span><span class="s1">ImageButton btnpic;</span>
+
+
+    <span class="s0">private </span><span class="s1">Button btnsave;</span>
+
+
+    <span class="s0">private </span><span class="s1">DatePickerDialog pickerDialog;</span>
+    <span class="s0">private </span><span class="s1">Calendar c = </span><span class="s0">null</span><span class="s1">;</span>
+
+
+    <span class="s0">private </span><span class="s1">CircleImageView imgcrl;</span>
+    <span class="s0">private static </span><span class="s1">String choosenPic =</span><span class="s3">&quot;profile.png&quot;</span><span class="s1">;</span>
+    <span class="s0">private boolean </span><span class="s1">defaultpic=</span><span class="s0">false</span><span class="s1">;</span>
+
+    <span class="s0">private </span><span class="s1">StorageReference storageReference=</span><span class="s0">null</span><span class="s1">;</span>
+    <span class="s0">private static </span><span class="s1">Uri selectedImage=</span><span class="s0">null</span><span class="s1">;</span>
+
+    <span class="s0">private </span><span class="s1">ProgressDialog dialog;</span>
+    <span class="s0">private </span><span class="s1">ProgressDialog dialogpic;</span>
+
+    <span class="s0">private </span><span class="s1">FirebaseDatabase db=</span><span class="s0">null</span><span class="s1">;</span>
+    <span class="s0">private </span><span class="s1">FirebaseAuth auth = </span><span class="s0">null</span><span class="s1">;</span>
+    <span class="s0">private </span><span class="s1">DatabaseReference ref=</span><span class="s0">null</span><span class="s1">;</span>
+
+    <span class="s0">private </span><span class="s1">ProgressDialog prg =</span><span class="s0">null</span><span class="s1">;</span>
+
+    <span class="s0">private </span><span class="s1">String currentUserID;</span>
+     <span class="s1">DatabaseReference mDatabaseUser;</span>
+
+      <span class="s1">FirebaseDatabase firebaseDatabase;</span>
+         <span class="s1">DatabaseReference databaseReference;</span>
+    <span class="s1">DatabaseReference databaseReferenceUser;</span>
+    <span class="s4">//-/-/-/-/-/-/-/-//-/-/-/-/-/-/-/-/-/-/-/-/-//-/-/-//-/-/-//-/-//-/-/-/-/-/-/-/-/-/-/-/-/-/-</span>
+
+    <span class="s0">private void </span><span class="s1">AddPicture()</span>
+    <span class="s1">{</span>
+        <span class="s1">StorageReference pic_storage= storageReference.child(</span><span class="s3">&quot;foodPics/&quot;  </span><span class="s1">+ choosenPic);</span>
+
+        <span class="s1">pic_storage.putFile(selectedImage).addOnSuccessListener(</span><span class="s0">new </span><span class="s1">OnSuccessListener&lt;UploadTask.TaskSnapshot&gt;() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onSuccess(UploadTask.TaskSnapshot taskSnapshot)</span>
+            <span class="s1">{</span>
+                <span class="s1">Toast.makeText(AddFood.</span><span class="s0">this</span><span class="s1">, </span><span class="s3">&quot;Image Updated!!!&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show();</span>
+                <span class="s1">startActivity(</span><span class="s0">new </span><span class="s1">Intent(AddFood.</span><span class="s0">this</span><span class="s1">,LogIn.</span><span class="s0">class</span><span class="s1">));</span>
+            <span class="s1">}</span>
+        <span class="s1">}).addOnFailureListener(AddFood.</span><span class="s0">this</span><span class="s1">, </span><span class="s0">new </span><span class="s1">OnFailureListener() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onFailure(@NonNull Exception e)</span>
+            <span class="s1">{</span>
+                <span class="s1">Toast.makeText(AddFood.</span><span class="s0">this</span><span class="s1">, e.getMessage(), Toast.LENGTH_LONG).show();</span>
+            <span class="s1">}</span>
+        <span class="s1">});</span>
+    <span class="s1">}</span>
+
+    <span class="s0">protected void </span><span class="s1">onActivityResult(</span><span class="s0">int </span><span class="s1">requestCode, </span><span class="s0">int </span><span class="s1">resultCode, @Nullable Intent data)</span>
+    <span class="s1">{</span>
+        <span class="s0">super</span><span class="s1">.onActivityResult(requestCode, resultCode, data);</span>
+
+        <span class="s0">if</span><span class="s1">(requestCode==</span><span class="s2">1 </span><span class="s1">&amp;&amp; data !=</span><span class="s0">null</span><span class="s1">)</span>
+        <span class="s1">{</span>
+            <span class="s1">selectedImage= data.getData();</span>
+
+            <span class="s1">imgcrl.setImageURI(selectedImage);</span>
+
+            <span class="s1">defaultpic=</span><span class="s0">true</span><span class="s1">;</span>
+
+            <span class="s1">String[] filepathColumn={MediaStore.Images.Media.DATA};</span>
+
+            <span class="s1">Cursor cursor = getContentResolver().query(selectedImage,filepathColumn,</span><span class="s0">null</span><span class="s1">,</span><span class="s0">null</span><span class="s1">,</span><span class="s0">null</span><span class="s1">);</span>
+
+            <span class="s1">cursor.moveToFirst();</span>
+
+            <span class="s0">int </span><span class="s1">columnIndex=cursor.getColumnIndex(filepathColumn[</span><span class="s2">0</span><span class="s1">]);</span>
+
+            <span class="s1">choosenPic =cursor.getString(columnIndex);</span>
+
+            <span class="s1">choosenPic = choosenPic.substring(choosenPic.lastIndexOf(</span><span class="s3">&quot;/&quot;</span><span class="s1">)+</span><span class="s2">1</span><span class="s1">);</span>
+
+
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+
+    <span class="s1">@Override</span>
+    <span class="s0">protected void </span><span class="s1">onCreate(Bundle savedInstanceState) {</span>
+        <span class="s0">super</span><span class="s1">.onCreate(savedInstanceState);</span>
+        <span class="s1">setContentView(R.layout.activity_add_food);</span>
+
+        <span class="s1">db = FirebaseDatabase.getInstance();</span>
+        <span class="s1">ref=db.getReference(</span><span class="s3">&quot;Food&quot;</span><span class="s1">);</span>
+
+        <span class="s1">databaseReference = firebaseDatabase.getInstance().getReference().child(</span><span class="s3">&quot;Food&quot;</span><span class="s1">);</span>
+        <span class="s1">databaseReferenceUser = firebaseDatabase.getInstance().getReference().child(</span><span class="s3">&quot;Users&quot;</span><span class="s1">);</span>
+        <span class="s1">storageReference= FirebaseStorage.getInstance().getReference();</span>
+
+        <span class="s1">prg=</span><span class="s0">new </span><span class="s1">ProgressDialog(</span><span class="s0">this</span><span class="s1">);</span>
+        <span class="s1">prg.setTitle(</span><span class="s3">&quot;Registration Data&quot;</span><span class="s1">);</span>
+        <span class="s1">prg.setMessage(</span><span class="s3">&quot;Saving Data&quot;</span><span class="s1">);</span>
+        <span class="s1">prg.setProgressStyle(ProgressDialog.STYLE_SPINNER);</span>
+        <span class="s1">prg.setCancelable(</span><span class="s0">false</span><span class="s1">);</span>
+
+        <span class="s1">btnsave=findViewById(R.id.btnsaveFood);</span>
+        <span class="s1">editdescription =findViewById(R.id.editdescription);</span>
+        <span class="s1">txtexpdate =findViewById(R.id.txtexpdate);</span>
+        <span class="s1">num=findViewById(R.id.num);</span>
+        <span class="s1">editfoodname=findViewById(R.id.editFoodname);</span>
+
+         <span class="s1">btnpic=findViewById(R.id.btnpic);</span>
+
+         <span class="s1">imgcrl=findViewById(R.id.imgcrl);</span>
+
+
+        <span class="s1">currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();</span>
+
+          <span class="s1">SimpleDateFormat sdf = </span><span class="s0">new </span><span class="s1">SimpleDateFormat(</span><span class="s3">&quot;dd/MM/yyyy&quot;</span><span class="s1">);</span>
+                <span class="s1">c = Calendar.getInstance();</span>
+                <span class="s1">String date = sdf.format(c.getTime());</span>
+
+
+
+                   <span class="s1">btnpic.setOnClickListener(</span><span class="s0">new </span><span class="s1">View.OnClickListener()</span>
+                   <span class="s1">{</span>
+                       <span class="s1">@Override</span>
+                       <span class="s0">public void </span><span class="s1">onClick(View v)</span>
+                       <span class="s1">{</span>
+                           <span class="s1">Intent it = </span><span class="s0">new </span><span class="s1">Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);</span>
+
+                           <span class="s1">startActivityForResult(it,</span><span class="s2">1</span><span class="s1">);</span>
+                       <span class="s1">}</span>
+                   <span class="s1">});</span>
+
+
+        <span class="s1">btnsave.setOnClickListener(</span><span class="s0">new </span><span class="s1">View.OnClickListener() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onClick(View v) {</span>
+
+                <span class="s1">AddPicture();</span>
+
+                <span class="s1">String foodname= editfoodname.getText().toString();</span>
+                <span class="s1">String foodnum=num.getText().toString();</span>
+                <span class="s1">String date = txtexpdate.getText().toString();</span>
+                <span class="s1">String editdes= editdescription.getText().toString();</span>
+                <span class="s1">String profileImageUrl =</span><span class="s3">&quot;profile.png&quot;</span><span class="s1">;</span>
+
+                <span class="s0">if</span><span class="s1">(defaultpic==</span><span class="s0">true</span><span class="s1">)</span>
+                    <span class="s1">profileImageUrl= choosenPic;</span>
+
+                <span class="s1">String id = databaseReference.push().getKey();</span>
+
+                 <span class="s1">Food food=</span><span class="s0">new </span><span class="s1">Food(foodname,editdes,foodnum,date,profileImageUrl, currentUserID);</span>
+                  <span class="s1">databaseReference.child(id).setValue(food);</span>
+                <span class="s4">//addToUser();</span>
+                  <span class="s1">databaseReferenceUser.child(currentUserID).child(</span><span class="s3">&quot;Food&quot;</span><span class="s1">).child(id).setValue(</span><span class="s0">true</span><span class="s1">);</span>
+
+                <span class="s1">Intent i = </span><span class="s0">new </span><span class="s1">Intent(AddFood.</span><span class="s0">this</span><span class="s1">, FoodListActivity.</span><span class="s0">class</span><span class="s1">);</span>
+                <span class="s1">AddFood.</span><span class="s0">this</span><span class="s1">.startActivity(i);</span>
+
+
+                
+
+              <span class="s4">/*  ref.setValue(food).addOnCompleteListener(AddFood.this, new OnCompleteListener&lt;Void&gt;() { 
+                    @Override 
+                    public void onComplete(@NonNull Task&lt;Void&gt; task) { 
+ 
+                        if(task.isSuccessful()) 
+                        { 
+                            Toast.makeText(AddFood.this, &quot;Added&quot;, Toast.LENGTH_SHORT).show(); 
+                            prg.dismiss(); 
+ 
+                            if (defaultpic==true) 
+                                AddPicture(); 
+                        } 
+                        else 
+                            startActivity(new Intent(AddFood.this, Setting.class)); 
+ 
+ 
+                    } 
+                });*/</span>
+
+            <span class="s1">}</span>
+        <span class="s1">});</span>
+
+    <span class="s1">}</span>
+
+    <span class="s0">private void </span><span class="s1">addToUser()</span>
+    <span class="s1">{</span>
+        <span class="s1">DatabaseReference currentUserConnectionsDb = databaseReferenceUser.child(currentUserID);</span>
+        <span class="s1">currentUserConnectionsDb.addListenerForSingleValueEvent(</span><span class="s0">new </span><span class="s1">ValueEventListener() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onDataChange(@NonNull DataSnapshot dataSnapshot) {</span>
+                <span class="s0">if</span><span class="s1">(dataSnapshot.exists()){</span>
+                    <span class="s1">String key = FirebaseDatabase.getInstance().getReference().child(</span><span class="s3">&quot;Food&quot;</span><span class="s1">).push().getKey();</span>
+                    <span class="s1">databaseReferenceUser.child(</span><span class="s3">&quot;connections&quot;</span><span class="s1">).setValue(key);</span>
+
+
+
+                <span class="s1">}</span>
+            <span class="s1">}</span>
+
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onCancelled(@NonNull DatabaseError databaseError) {</span>
+
+            <span class="s1">}</span>
+        <span class="s1">});</span>
+    <span class="s1">}</span>
+
+
+    <span class="s1">@RequiresApi(api = Build.VERSION_CODES.N)</span>
+    <span class="s0">public void </span><span class="s1">ShowDate(View view) {</span>
+
+        <span class="s0">final int </span><span class="s1">myday=c.get(Calendar.DAY_OF_MONTH);</span>
+        <span class="s0">int </span><span class="s1">mymonth=c.get(Calendar.MONTH);</span>
+        <span class="s0">int </span><span class="s1">myyear=c.get(Calendar.YEAR);</span>
+
+        <span class="s1">pickerDialog= </span><span class="s0">new </span><span class="s1">DatePickerDialog(AddFood.</span><span class="s0">this</span><span class="s1">, </span><span class="s0">new </span><span class="s1">DatePickerDialog.OnDateSetListener() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onDateSet(DatePicker view, </span><span class="s0">int </span><span class="s1">year, </span><span class="s0">int </span><span class="s1">month, </span><span class="s0">int </span><span class="s1">dayOfMonth) {</span>
+
+                <span class="s1">txtexpdate.setText(dayOfMonth + </span><span class="s3">&quot;/&quot; </span><span class="s1">+ month + </span><span class="s3">&quot;/&quot; </span><span class="s1">+ year);</span>
+            <span class="s1">}</span>
+        <span class="s1">},myyear,mymonth,myday);</span>
+
+        <span class="s1">pickerDialog.show();</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public boolean </span><span class="s1">onCreateOptionsMenu(Menu menu) {</span>
+        <span class="s1">MenuInflater inflater = getMenuInflater();</span>
+        <span class="s1">inflater.inflate(R.menu.menu, menu);</span>
+        <span class="s0">return true</span><span class="s1">;</span>
+    <span class="s1">}</span>
+    <span class="s1">@Override</span>
+    <span class="s0">public boolean </span><span class="s1">onOptionsItemSelected(MenuItem item) {</span>
+        <span class="s0">switch </span><span class="s1">(item.getItemId()) {</span>
+            <span class="s0">case </span><span class="s1">R.id.item2:</span>
+                <span class="s1">Toast.makeText(</span><span class="s0">this</span><span class="s1">, </span><span class="s3">&quot;My Profile&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show();</span>
+                <span class="s1">Intent it =</span><span class="s0">new </span><span class="s1">Intent(AddFood.</span><span class="s0">this</span><span class="s1">,Setting.</span><span class="s0">class</span><span class="s1">);</span>
+                <span class="s1">startActivity(it);</span>
+                <span class="s0">return true</span><span class="s1">;</span>
+            <span class="s0">case </span><span class="s1">R.id.item3:</span>
+                <span class="s1">Toast.makeText(</span><span class="s0">this</span><span class="s1">, </span><span class="s3">&quot;Food List&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show();</span>
+                <span class="s1">Intent it2 =</span><span class="s0">new </span><span class="s1">Intent(AddFood.</span><span class="s0">this</span><span class="s1">,FoodListActivity.</span><span class="s0">class</span><span class="s1">);</span>
+                <span class="s1">startActivity(it2);</span>
+                <span class="s0">return true</span><span class="s1">;</span>
+            <span class="s0">case </span><span class="s1">R.id.item4:</span>
+                <span class="s1">Toast.makeText(</span><span class="s0">this</span><span class="s1">, </span><span class="s3">&quot;Add Food&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show();</span>
+                <span class="s1">Intent it3 =</span><span class="s0">new </span><span class="s1">Intent(AddFood.</span><span class="s0">this</span><span class="s1">,AddFood.</span><span class="s0">class</span><span class="s1">);</span>
+                <span class="s1">startActivity(it3);</span>
+                <span class="s0">return true</span><span class="s1">;</span>
+            <span class="s0">case </span><span class="s1">R.id.item5:</span>
+                <span class="s1">Toast.makeText(</span><span class="s0">this</span><span class="s1">, </span><span class="s3">&quot;Users List&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show();</span>
+                <span class="s1">Intent it4 =</span><span class="s0">new </span><span class="s1">Intent(AddFood.</span><span class="s0">this</span><span class="s1">,UsersListActivity.</span><span class="s0">class</span><span class="s1">);</span>
+                <span class="s1">startActivity(it4);</span>
+                <span class="s0">return true</span><span class="s1">;</span>
+            <span class="s0">default</span><span class="s1">:</span>
+                <span class="s0">return super</span><span class="s1">.onOptionsItemSelected(item);</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+</pre>
+</body>
+</html>

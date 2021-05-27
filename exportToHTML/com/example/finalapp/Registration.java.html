@@ -1,0 +1,244 @@
+<html>
+<head>
+<title>Registration.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #0033b3;}
+.s1 { color: #080808;}
+.s2 { color: #8c8c8c; font-style: italic;}
+.s3 { color: #067d17;}
+.s4 { color: #1750eb;}
+</style>
+</head>
+<body bgcolor="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Registration.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.example.finalapp;</span>
+
+<span class="s0">import </span><span class="s1">androidx.annotation.NonNull;</span>
+<span class="s0">import </span><span class="s1">androidx.annotation.Nullable;</span>
+<span class="s0">import </span><span class="s1">androidx.appcompat.app.AppCompatActivity;</span>
+
+<span class="s0">import </span><span class="s1">android.app.ProgressDialog;</span>
+<span class="s0">import </span><span class="s1">android.content.Intent;</span>
+<span class="s0">import </span><span class="s1">android.database.Cursor;</span>
+<span class="s0">import </span><span class="s1">android.net.Uri;</span>
+<span class="s0">import </span><span class="s1">android.os.Bundle;</span>
+<span class="s0">import </span><span class="s1">android.provider.MediaStore;</span>
+<span class="s0">import </span><span class="s1">android.view.View;</span>
+<span class="s0">import </span><span class="s1">android.widget.Button;</span>
+<span class="s0">import </span><span class="s1">android.widget.EditText;</span>
+<span class="s0">import </span><span class="s1">android.widget.ImageButton;</span>
+<span class="s0">import </span><span class="s1">android.widget.ImageView;</span>
+<span class="s0">import </span><span class="s1">android.widget.RadioButton;</span>
+<span class="s0">import </span><span class="s1">android.widget.RadioGroup;</span>
+<span class="s0">import </span><span class="s1">android.widget.Toast;</span>
+
+<span class="s0">import </span><span class="s1">com.google.android.gms.tasks.OnCompleteListener;</span>
+<span class="s0">import </span><span class="s1">com.google.android.gms.tasks.OnFailureListener;</span>
+<span class="s0">import </span><span class="s1">com.google.android.gms.tasks.OnSuccessListener;</span>
+<span class="s0">import </span><span class="s1">com.google.android.gms.tasks.Task;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.auth.AuthResult;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.auth.FirebaseAuth;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.DatabaseReference;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.FirebaseDatabase;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.storage.FirebaseStorage;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.storage.StorageReference;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.storage.UploadTask;</span>
+
+<span class="s0">public class </span><span class="s1">Registration </span><span class="s0">extends </span><span class="s1">AppCompatActivity {</span>
+
+    <span class="s0">private </span><span class="s1">EditText editemail,editpass,editname,editphone,editdate;</span>
+    <span class="s0">private </span><span class="s1">ImageView img;</span>
+    <span class="s0">private </span><span class="s1">Button btnsave;</span>
+    <span class="s0">private </span><span class="s1">ImageButton btnpic;</span>
+    <span class="s0">private </span><span class="s1">RadioButton rdmale,rdbfemale;</span>
+    <span class="s0">private </span><span class="s1">RadioGroup rdb;</span>
+
+    <span class="s2">//-----------------------------</span>
+    <span class="s0">private </span><span class="s1">FirebaseDatabase db=</span><span class="s0">null</span><span class="s1">;</span>
+    <span class="s0">private </span><span class="s1">FirebaseAuth auth = </span><span class="s0">null</span><span class="s1">;</span>
+    <span class="s0">private </span><span class="s1">DatabaseReference ref=</span><span class="s0">null</span><span class="s1">;</span>
+    <span class="s0">private </span><span class="s1">StorageReference storageReference=</span><span class="s0">null</span><span class="s1">;</span>
+
+    <span class="s0">private static </span><span class="s1">String choosenPic=</span><span class="s3">&quot;profile.png&quot;</span><span class="s1">;</span>
+    <span class="s0">private static boolean </span><span class="s1">ichoose=</span><span class="s0">false</span><span class="s1">;</span>
+
+    <span class="s0">private </span><span class="s1">ProgressDialog prg =</span><span class="s0">null</span><span class="s1">;</span>
+
+    <span class="s0">private static </span><span class="s1">Uri selectedImage=</span><span class="s0">null</span><span class="s1">;</span>
+    <span class="s2">//---------------------------------------------</span>
+    <span class="s0">private void </span><span class="s1">AddPicture()</span>
+    <span class="s1">{</span>
+        <span class="s1">StorageReference pic_storage=storageReference.child(</span><span class="s3">&quot;pics/&quot;  </span><span class="s1">+ choosenPic);</span>
+
+        <span class="s1">pic_storage.putFile(selectedImage).addOnSuccessListener(</span><span class="s0">new </span><span class="s1">OnSuccessListener&lt;UploadTask.TaskSnapshot&gt;() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onSuccess(UploadTask.TaskSnapshot taskSnapshot)</span>
+            <span class="s1">{</span>
+                <span class="s1">Toast.makeText(Registration.</span><span class="s0">this</span><span class="s1">, </span><span class="s3">&quot;Image Updated!!!&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show();</span>
+                <span class="s1">startActivity(</span><span class="s0">new </span><span class="s1">Intent(Registration.</span><span class="s0">this</span><span class="s1">,LogIn.</span><span class="s0">class</span><span class="s1">));</span>
+            <span class="s1">}</span>
+        <span class="s1">}).addOnFailureListener(Registration.</span><span class="s0">this</span><span class="s1">, </span><span class="s0">new </span><span class="s1">OnFailureListener() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onFailure(@NonNull Exception e)</span>
+            <span class="s1">{</span>
+                <span class="s1">Toast.makeText(Registration.</span><span class="s0">this</span><span class="s1">, e.getMessage(), Toast.LENGTH_LONG).show();</span>
+            <span class="s1">}</span>
+        <span class="s1">});</span>
+    <span class="s1">}</span>
+
+
+
+    <span class="s1">@Override</span>
+    <span class="s0">protected void </span><span class="s1">onActivityResult(</span><span class="s0">int </span><span class="s1">requestCode, </span><span class="s0">int </span><span class="s1">resultCode, @Nullable Intent data)</span>
+    <span class="s1">{</span>
+        <span class="s0">super</span><span class="s1">.onActivityResult(requestCode, resultCode, data);</span>
+
+        <span class="s0">if</span><span class="s1">(requestCode==</span><span class="s4">1 </span><span class="s1">&amp;&amp; data !=</span><span class="s0">null</span><span class="s1">)</span>
+        <span class="s1">{</span>
+            <span class="s1">selectedImage= data.getData();</span>
+
+            <span class="s1">img.setImageURI(selectedImage);</span>
+
+            <span class="s1">ichoose=</span><span class="s0">true</span><span class="s1">;</span>
+
+            <span class="s1">String[] filepathColumn={MediaStore.Images.Media.DATA};</span>
+
+            <span class="s1">Cursor cursor = getContentResolver().query(selectedImage,filepathColumn,</span><span class="s0">null</span><span class="s1">,</span><span class="s0">null</span><span class="s1">,</span><span class="s0">null</span><span class="s1">);</span>
+
+            <span class="s1">cursor.moveToFirst();</span>
+
+            <span class="s0">int </span><span class="s1">columnIndex=cursor.getColumnIndex(filepathColumn[</span><span class="s4">0</span><span class="s1">]);</span>
+
+            <span class="s1">choosenPic=cursor.getString(columnIndex);</span>
+
+            <span class="s1">choosenPic=choosenPic.substring(choosenPic.lastIndexOf(</span><span class="s3">&quot;/&quot;</span><span class="s1">)+</span><span class="s4">1</span><span class="s1">);</span>
+
+
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">protected void </span><span class="s1">onCreate(Bundle savedInstanceState)</span>
+    <span class="s1">{</span>
+        <span class="s0">super</span><span class="s1">.onCreate(savedInstanceState);</span>
+        <span class="s1">setContentView(R.layout.activity_registration);</span>
+
+        <span class="s1">Permission p = </span><span class="s0">new </span><span class="s1">Permission(</span><span class="s0">this</span><span class="s1">);</span>
+        <span class="s1">p.verifyPermissions();</span>
+
+        <span class="s1">editemail=findViewById(R.id.editemail);</span>
+        <span class="s1">editpass=findViewById(R.id.editpass);</span>
+        <span class="s1">editdate=findViewById(R.id.editdate);</span>
+        <span class="s1">editname=findViewById(R.id.editname);</span>
+        <span class="s1">editphone=findViewById(R.id.editphone);</span>
+
+        <span class="s1">rdbfemale=findViewById(R.id.rdbfemale);</span>
+        <span class="s1">rdmale=findViewById(R.id.rdbmale);</span>
+
+        <span class="s1">rdb=findViewById(R.id.rdbg);</span>
+
+        <span class="s1">img=findViewById(R.id.img);</span>
+
+        <span class="s1">btnpic=findViewById(R.id.btnpic);</span>
+        <span class="s1">btnsave=findViewById(R.id.btnsave);</span>
+
+        <span class="s1">db = FirebaseDatabase.getInstance();</span>
+        <span class="s1">auth=FirebaseAuth.getInstance();</span>
+        <span class="s1">ref=db.getReference(</span><span class="s3">&quot;Users&quot;</span><span class="s1">);</span>
+        <span class="s1">storageReference= FirebaseStorage.getInstance().getReference();</span>
+
+        <span class="s1">prg=</span><span class="s0">new </span><span class="s1">ProgressDialog(</span><span class="s0">this</span><span class="s1">);</span>
+        <span class="s1">prg.setTitle(</span><span class="s3">&quot;Registration Data&quot;</span><span class="s1">);</span>
+        <span class="s1">prg.setMessage(</span><span class="s3">&quot;Saving Data&quot;</span><span class="s1">);</span>
+        <span class="s1">prg.setProgressStyle(ProgressDialog.STYLE_SPINNER);</span>
+        <span class="s1">prg.setCancelable(</span><span class="s0">false</span><span class="s1">);</span>
+
+
+        <span class="s1">btnpic.setOnClickListener(</span><span class="s0">new </span><span class="s1">View.OnClickListener()</span>
+        <span class="s1">{</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onClick(View v)</span>
+            <span class="s1">{</span>
+                <span class="s1">Intent it = </span><span class="s0">new </span><span class="s1">Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);</span>
+
+                <span class="s1">startActivityForResult(it,</span><span class="s4">1</span><span class="s1">);</span>
+            <span class="s1">}</span>
+        <span class="s1">});</span>
+
+        <span class="s1">btnsave.setOnClickListener(</span><span class="s0">new </span><span class="s1">View.OnClickListener()</span>
+        <span class="s1">{</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onClick(View v)</span>
+            <span class="s1">{</span>
+
+                <span class="s1">prg.show();</span>
+
+                <span class="s1">auth.createUserWithEmailAndPassword(editemail.getText().toString(),editpass.getText().toString()).addOnCompleteListener(Registration.</span><span class="s0">this</span><span class="s1">, </span><span class="s0">new </span><span class="s1">OnCompleteListener&lt;AuthResult&gt;()</span>
+                <span class="s1">{</span>
+                    <span class="s1">@Override</span>
+                    <span class="s0">public void </span><span class="s1">onComplete(@NonNull Task&lt;AuthResult&gt; task)</span>
+                    <span class="s1">{</span>
+                        <span class="s0">if</span><span class="s1">(task.isSuccessful())</span>
+                        <span class="s1">{</span>
+                            <span class="s1">String email=editemail.getText().toString();</span>
+                            <span class="s1">String pass = editpass.getText().toString();</span>
+                            <span class="s1">String phone=editphone.getText().toString();</span>
+                            <span class="s1">String BirthhDay=editdate.getText().toString();</span>
+                            <span class="s1">String name=editname.getText().toString();</span>
+                            <span class="s1">String profileImageUrl =</span><span class="s3">&quot;profile.png&quot;</span><span class="s1">;</span>
+
+                            <span class="s0">if</span><span class="s1">(ichoose==</span><span class="s0">true</span><span class="s1">)</span>
+                                <span class="s1">profileImageUrl=choosenPic;</span>
+
+                            <span class="s1">String sex=</span><span class="s3">&quot;&quot;</span><span class="s1">;</span>
+
+                            <span class="s0">int </span><span class="s1">id=rdb.getCheckedRadioButtonId();</span>
+
+                            <span class="s0">if</span><span class="s1">(id==R.id.rdbmale)</span>
+                                <span class="s1">sex=</span><span class="s3">&quot;male&quot;</span><span class="s1">;</span>
+                            <span class="s0">else</span>
+                                <span class="s1">sex=</span><span class="s3">&quot;female&quot;</span><span class="s1">;</span>
+
+                            <span class="s1">User user=</span><span class="s0">new </span><span class="s1">User(email,pass,sex,phone,BirthhDay,name,profileImageUrl);</span>
+
+                            <span class="s1">ref.child(auth.getUid()).setValue(user).addOnCompleteListener(Registration.</span><span class="s0">this</span><span class="s1">, </span><span class="s0">new </span><span class="s1">OnCompleteListener&lt;Void&gt;()</span>
+                            <span class="s1">{</span>
+                                <span class="s1">@Override</span>
+                                <span class="s0">public void </span><span class="s1">onComplete(@NonNull Task&lt;Void&gt; task)</span>
+                                <span class="s1">{</span>
+                                    <span class="s0">if</span><span class="s1">(task.isSuccessful())</span>
+                                    <span class="s1">{</span>
+                                        <span class="s1">Toast.makeText(Registration.</span><span class="s0">this</span><span class="s1">, </span><span class="s3">&quot;Database Created!!!!&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show();</span>
+                                        <span class="s1">prg.dismiss();</span>
+
+                                        <span class="s0">if</span><span class="s1">(ichoose==</span><span class="s0">true</span><span class="s1">)</span>
+                                            <span class="s1">AddPicture();</span>
+                                        <span class="s0">else</span>
+                                            <span class="s1">startActivity(</span><span class="s0">new </span><span class="s1">Intent(Registration.</span><span class="s0">this</span><span class="s1">,Setting.</span><span class="s0">class</span><span class="s1">));</span>
+                                    <span class="s1">}</span>
+                                <span class="s1">}</span>
+                            <span class="s1">});</span>
+
+                        <span class="s1">}</span>
+                    <span class="s1">}</span>
+                <span class="s1">}).addOnFailureListener(Registration.</span><span class="s0">this</span><span class="s1">, </span><span class="s0">new </span><span class="s1">OnFailureListener()</span>
+                <span class="s1">{</span>
+                    <span class="s1">@Override</span>
+                    <span class="s0">public void </span><span class="s1">onFailure(@NonNull Exception e)</span>
+                    <span class="s1">{</span>
+                        <span class="s1">Toast.makeText(Registration.</span><span class="s0">this</span><span class="s1">, e.getMessage(), Toast.LENGTH_SHORT).show();</span>
+                        <span class="s1">prg.dismiss();</span>
+                    <span class="s1">}</span>
+                <span class="s1">});</span>
+            <span class="s1">}</span>
+        <span class="s1">});</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+</pre>
+</body>
+</html>

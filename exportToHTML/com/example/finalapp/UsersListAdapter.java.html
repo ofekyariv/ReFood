@@ -1,0 +1,162 @@
+<html>
+<head>
+<title>UsersListAdapter.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #0033b3;}
+.s1 { color: #080808;}
+.s2 { color: #067d17;}
+.s3 { color: #1750eb;}
+.s4 { color: #8c8c8c; font-style: italic;}
+</style>
+</head>
+<body bgcolor="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+UsersListAdapter.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.example.finalapp;</span>
+
+<span class="s0">import </span><span class="s1">android.content.Context;</span>
+<span class="s0">import </span><span class="s1">android.graphics.Bitmap;</span>
+<span class="s0">import </span><span class="s1">android.graphics.BitmapFactory;</span>
+<span class="s0">import </span><span class="s1">android.view.LayoutInflater;</span>
+<span class="s0">import </span><span class="s1">android.view.View;</span>
+<span class="s0">import </span><span class="s1">android.view.ViewGroup;</span>
+<span class="s0">import </span><span class="s1">android.widget.BaseAdapter;</span>
+<span class="s0">import </span><span class="s1">android.widget.TextView;</span>
+
+<span class="s0">import </span><span class="s1">androidx.annotation.NonNull;</span>
+<span class="s0">import </span><span class="s1">androidx.recyclerview.widget.RecyclerView;</span>
+
+<span class="s0">import </span><span class="s1">com.bumptech.glide.Glide;</span>
+<span class="s0">import </span><span class="s1">com.google.android.gms.tasks.OnSuccessListener;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.storage.FileDownloadTask;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.storage.FirebaseStorage;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.storage.StorageReference;</span>
+
+<span class="s0">import </span><span class="s1">java.io.File;</span>
+<span class="s0">import </span><span class="s1">java.io.IOException;</span>
+<span class="s0">import </span><span class="s1">java.util.ArrayList;</span>
+<span class="s0">import </span><span class="s1">java.util.List;</span>
+
+<span class="s0">import </span><span class="s1">de.hdodenhof.circleimageview.CircleImageView;</span>
+
+<span class="s0">public class </span><span class="s1">UsersListAdapter </span><span class="s0">extends </span><span class="s1">BaseAdapter {</span>
+
+    <span class="s1">Context contex;</span>
+    <span class="s1">ArrayList&lt;User&gt; usersList;</span>
+    <span class="s0">private </span><span class="s1">String pic_path;</span>
+
+    <span class="s0">public </span><span class="s1">UsersListAdapter(Context c, ArrayList&lt;User&gt; usersList, String pic_path)</span>
+    <span class="s1">{</span>
+        <span class="s0">this</span><span class="s1">.contex = c;</span>
+        <span class="s0">this</span><span class="s1">.usersList = usersList;</span>
+        <span class="s0">this</span><span class="s1">.pic_path=pic_path;</span>
+    <span class="s1">}</span>
+
+
+    <span class="s1">@Override</span>
+    <span class="s0">public int </span><span class="s1">getCount() {</span>
+        <span class="s0">return </span><span class="s1">usersList.size();</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public </span><span class="s1">Object getItem(</span><span class="s0">int </span><span class="s1">position) {</span>
+        <span class="s0">return </span><span class="s1">usersList.get(position);</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public long </span><span class="s1">getItemId(</span><span class="s0">int </span><span class="s1">position) {</span>
+        <span class="s0">return </span><span class="s1">position;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public </span><span class="s1">View getView(</span><span class="s0">int </span><span class="s1">position, View convertView, ViewGroup parent) {</span>
+
+        <span class="s1">LayoutInflater layoutInflater = (LayoutInflater) </span><span class="s0">this</span><span class="s1">.contex.getSystemService(Context.LAYOUT_INFLATER_SERVICE);</span>
+        <span class="s1">View show_users_search = layoutInflater.inflate(R.layout.user_row, parent, </span><span class="s0">false</span><span class="s1">);</span>
+        <span class="s1">TextView fullname= (TextView)show_users_search.findViewById(R.id.namelist);</span>
+        <span class="s1">TextView username= (TextView)show_users_search.findViewById(R.id.emaillist);</span>
+
+
+        <span class="s1">fullname.setText(usersList.get(position).getName());</span>
+        <span class="s1">username.setText(usersList.get(position).getEmail());</span>
+
+        <span class="s0">final </span><span class="s1">CircleImageView imageView =show_users_search.findViewById(R.id.pro);</span>
+
+        <span class="s1">String picname=</span><span class="s0">this</span><span class="s1">.usersList.get(position).getPic();</span>
+
+        <span class="s1">String suffix=picname.substring(picname.lastIndexOf(</span><span class="s2">&quot;.&quot;</span><span class="s1">)+</span><span class="s3">1</span><span class="s1">);</span>
+
+        <span class="s1">FirebaseStorage storage = FirebaseStorage.getInstance();</span>
+
+        <span class="s1">StorageReference storageRef = storage.getReferenceFromUrl(pic_path).child(</span><span class="s2">&quot;Users&quot;</span><span class="s1">).child(picname);</span>
+
+        <span class="s0">try</span>
+        <span class="s1">{</span>
+            <span class="s0">final </span><span class="s1">File localfile=File.createTempFile(picname,suffix);</span>
+
+            <span class="s1">storageRef.getFile(localfile).addOnSuccessListener(</span><span class="s0">new </span><span class="s1">OnSuccessListener&lt;FileDownloadTask.TaskSnapshot&gt;()</span>
+            <span class="s1">{</span>
+                <span class="s1">@Override</span>
+                <span class="s0">public void </span><span class="s1">onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot)</span>
+                <span class="s1">{</span>
+                    <span class="s1">Bitmap bitmap = BitmapFactory.decodeFile(localfile.getAbsolutePath());</span>
+                    <span class="s4">// set image based on selected text</span>
+                    <span class="s1">imageView.setImageBitmap(bitmap);</span>
+                <span class="s1">}</span>
+            <span class="s1">});</span>
+        <span class="s1">}</span>
+        <span class="s0">catch </span><span class="s1">(IOException e)</span>
+        <span class="s1">{</span>
+            <span class="s1">e.printStackTrace();</span>
+        <span class="s1">}</span>
+
+
+
+        <span class="s0">return </span><span class="s1">show_users_search;</span>
+    <span class="s1">}</span>
+
+  <span class="s4">/*  private ArrayList&lt;UserObj&gt; userList = new ArrayList&lt;&gt;(); 
+ 
+    private Context context; 
+ 
+    public UsersListAdapter(ArrayList&lt;UserObj&gt; userList, Context context) 
+    { 
+        this.userList = userList; 
+        this.context = context; 
+ 
+    } 
+ 
+    @Override 
+    public UsersListViewHolders onCreateViewHolder(@NonNull ViewGroup parent, int viewType) { 
+        View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.user_row, null, false); 
+        RecyclerView.LayoutParams lp = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT); 
+        layoutView.setLayoutParams(lp); 
+        UsersListViewHolders rcv = new UsersListViewHolders(layoutView); 
+ 
+        return rcv; 
+    } 
+ 
+    @Override 
+    public void onBindViewHolder(@NonNull UsersListViewHolders holder, int position) { 
+ 
+        holder.uidTv.setText(userList.get(position).getOUserId()); 
+        holder.nameTv.setText(userList.get(position).getOName()); 
+        if(!userList.get(position).getProfileImageUrl().equals(&quot;default&quot;)){ 
+            Glide.with(context).load(userList.get(position).getProfileImageUrl()).into(holder.proimg); 
+        } 
+ 
+    } 
+    @Override 
+    public int getItemCount() { 
+        return this.userList.size(); 
+    }*/</span>
+
+
+<span class="s1">}</span>
+</pre>
+</body>
+</html>

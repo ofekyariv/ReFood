@@ -1,0 +1,58 @@
+<html>
+<head>
+<title>StaticValues.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #0033b3;}
+.s1 { color: #080808;}
+.s2 { color: #067d17;}
+</style>
+</head>
+<body bgcolor="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+StaticValues.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.example.finalapp;</span>
+
+<span class="s0">import </span><span class="s1">java.util.ArrayList;</span>
+
+<span class="s0">public class </span><span class="s1">StaticValues {</span>
+
+    <span class="s0">private static </span><span class="s1">User user;</span>
+
+    <span class="s0">private static </span><span class="s1">String uid=</span><span class="s2">&quot;&quot;</span><span class="s1">;</span>
+
+    <span class="s0">private static </span><span class="s1">ArrayList&lt;User&gt; list = </span><span class="s0">new </span><span class="s1">ArrayList&lt;User&gt;();</span>
+
+    <span class="s0">public static </span><span class="s1">User getUser()</span>
+    <span class="s1">{</span>
+        <span class="s0">return </span><span class="s1">user;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public static void </span><span class="s1">setUser(User user) {</span>
+        <span class="s1">StaticValues.user = user;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public static </span><span class="s1">String getUid() {</span>
+        <span class="s0">return </span><span class="s1">uid;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public static void </span><span class="s1">setUid(String uid) {</span>
+        <span class="s1">StaticValues.uid = uid;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public static </span><span class="s1">ArrayList&lt;User&gt; getList() {</span>
+        <span class="s0">return </span><span class="s1">list;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public static void </span><span class="s1">setList(ArrayList&lt;User&gt; list) {</span>
+        <span class="s1">StaticValues.list = list;</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+
+
+</pre>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<html>
+<head>
+<title>Distribution_WaitingList_Adapter.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #0033b3;}
+.s1 { color: #080808;}
+.s2 { color: #1750eb;}
+.s3 { color: #067d17;}
+</style>
+</head>
+<body bgcolor="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Distribution_WaitingList_Adapter.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.example.finalapp;</span>
+
+<span class="s0">import </span><span class="s1">android.content.Context;</span>
+<span class="s0">import </span><span class="s1">android.view.LayoutInflater;</span>
+<span class="s0">import </span><span class="s1">android.view.View;</span>
+<span class="s0">import </span><span class="s1">android.view.ViewGroup;</span>
+<span class="s0">import </span><span class="s1">android.widget.BaseAdapter;</span>
+<span class="s0">import </span><span class="s1">android.widget.TextView;</span>
+
+<span class="s0">import </span><span class="s1">com.blogspot.atifsoftwares.circularimageview.CircularImageView;</span>
+<span class="s0">import </span><span class="s1">com.bumptech.glide.Glide;</span>
+
+<span class="s0">import </span><span class="s1">java.util.ArrayList;</span>
+
+<span class="s0">public class </span><span class="s1">Distribution_WaitingList_Adapter </span><span class="s0">extends </span><span class="s1">BaseAdapter {</span>
+
+    <span class="s1">Context contex;</span>
+    <span class="s1">ArrayList&lt;User&gt; usersList;</span>
+
+    <span class="s0">public </span><span class="s1">Distribution_WaitingList_Adapter(Context c, ArrayList&lt;User&gt; usersList)</span>
+    <span class="s1">{</span>
+        <span class="s0">this</span><span class="s1">.contex = c;</span>
+        <span class="s0">this</span><span class="s1">.usersList = usersList;</span>
+    <span class="s1">}</span>
+    <span class="s1">@Override</span>
+    <span class="s0">public int </span><span class="s1">getCount() {</span>
+        <span class="s0">return </span><span class="s1">usersList.size();</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public </span><span class="s1">Object getItem(</span><span class="s0">int </span><span class="s1">position) {</span>
+        <span class="s0">return null</span><span class="s1">;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public long </span><span class="s1">getItemId(</span><span class="s0">int </span><span class="s1">position) {</span>
+        <span class="s0">return </span><span class="s2">0</span><span class="s1">;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public </span><span class="s1">View getView(</span><span class="s0">int </span><span class="s1">position, View convertView, ViewGroup parent) {</span>
+        <span class="s1">LayoutInflater layoutInflater = (LayoutInflater) </span><span class="s0">this</span><span class="s1">.contex.getSystemService(Context.LAYOUT_INFLATER_SERVICE);</span>
+        <span class="s1">View show_Discarabution = layoutInflater.inflate(R.layout.distribution_waitinglist_row, parent, </span><span class="s0">false</span><span class="s1">);</span>
+        <span class="s1">TextView fullname= (TextView)show_Discarabution.findViewById(R.id.email_userwaitingListlist);</span>
+        <span class="s1">TextView username= (TextView)show_Discarabution.findViewById(R.id.name_userwaitingListlist);</span>
+        <span class="s1">CircularImageView img= (CircularImageView) show_Discarabution.findViewById(R.id.img_userwaitingList);</span>
+
+        <span class="s0">if</span><span class="s1">(!usersList.get(position).getPic().equals(</span><span class="s3">&quot;profile.png&quot;</span><span class="s1">)){</span>
+            <span class="s1">Glide.with(contex).load(usersList.get(position).getPic()).into(img);</span>
+        <span class="s1">}</span>
+
+
+        <span class="s1">fullname.setText(usersList.get(position).getEmail());</span>
+        <span class="s1">username.setText(usersList.get(position).getName());</span>
+
+
+        <span class="s0">return </span><span class="s1">show_Discarabution;</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+</pre>
+</body>
+</html>

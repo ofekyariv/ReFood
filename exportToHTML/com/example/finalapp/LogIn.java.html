@@ -1,0 +1,138 @@
+<html>
+<head>
+<title>LogIn.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #0033b3;}
+.s1 { color: #080808;}
+.s2 { color: #8c8c8c; font-style: italic;}
+.s3 { color: #067d17;}
+</style>
+</head>
+<body bgcolor="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+LogIn.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.example.finalapp;</span>
+
+<span class="s0">import </span><span class="s1">androidx.annotation.NonNull;</span>
+<span class="s0">import </span><span class="s1">androidx.appcompat.app.AppCompatActivity;</span>
+
+<span class="s0">import </span><span class="s1">android.content.Intent;</span>
+<span class="s0">import </span><span class="s1">android.os.Bundle;</span>
+<span class="s0">import </span><span class="s1">android.view.View;</span>
+<span class="s0">import </span><span class="s1">android.widget.Button;</span>
+<span class="s0">import </span><span class="s1">android.widget.EditText;</span>
+<span class="s0">import </span><span class="s1">android.widget.Toast;</span>
+
+<span class="s0">import </span><span class="s1">com.google.android.gms.tasks.OnCompleteListener;</span>
+<span class="s0">import </span><span class="s1">com.google.android.gms.tasks.OnFailureListener;</span>
+<span class="s0">import </span><span class="s1">com.google.android.gms.tasks.Task;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.auth.AuthResult;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.auth.FirebaseAuth;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.DataSnapshot;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.DatabaseError;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.DatabaseReference;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.FirebaseDatabase;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.ValueEventListener;</span>
+
+<span class="s0">public class </span><span class="s1">LogIn </span><span class="s0">extends </span><span class="s1">AppCompatActivity {</span>
+
+    <span class="s0">private </span><span class="s1">EditText editem,editpa;</span>
+    <span class="s0">private </span><span class="s1">Button btns;</span>
+    <span class="s2">//-------------------------------</span>
+    <span class="s0">private </span><span class="s1">FirebaseAuth auth=</span><span class="s0">null</span><span class="s1">;</span>
+    <span class="s0">private </span><span class="s1">FirebaseAuth.AuthStateListener firebaseAuthStateListener;</span>
+    <span class="s0">private </span><span class="s1">FirebaseDatabase db= FirebaseDatabase.getInstance();</span>
+    <span class="s0">private </span><span class="s1">DatabaseReference reference=</span><span class="s0">null</span><span class="s1">;</span>
+
+    <span class="s0">private </span><span class="s1">String currentUId;</span>
+
+
+    <span class="s1">{</span>
+        <span class="s1">reference=db.getReference().child(</span><span class="s3">&quot;Users&quot;</span><span class="s1">);</span>
+
+        <span class="s1">reference.addListenerForSingleValueEvent(</span><span class="s0">new </span><span class="s1">ValueEventListener()</span>
+        <span class="s1">{</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onDataChange(@NonNull DataSnapshot dataSnapshot)</span>
+            <span class="s1">{</span>
+                <span class="s0">for</span><span class="s1">(DataSnapshot myrow:dataSnapshot.getChildren())</span>
+                    <span class="s1">StaticValues.getList().add(myrow.getValue(User.</span><span class="s0">class</span><span class="s1">));</span>
+
+            <span class="s1">}</span>
+
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onCancelled(@NonNull DatabaseError databaseError)</span>
+            <span class="s1">{</span>
+                <span class="s1">Toast.makeText(LogIn.</span><span class="s0">this</span><span class="s1">, databaseError.getMessage(), Toast.LENGTH_SHORT).show();</span>
+            <span class="s1">}</span>
+        <span class="s1">});</span>
+
+    <span class="s1">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">protected void </span><span class="s1">onCreate(Bundle savedInstanceState) {</span>
+        <span class="s0">super</span><span class="s1">.onCreate(savedInstanceState);</span>
+        <span class="s1">setContentView(R.layout.activity_log_in);</span>
+
+        <span class="s1">editem=findViewById(R.id.editem);</span>
+        <span class="s1">editpa=findViewById(R.id.editpa);</span>
+
+        <span class="s1">btns=findViewById(R.id.btns);</span>
+
+        <span class="s1">auth=FirebaseAuth.getInstance();</span>
+
+        <span class="s1">reference=db.getReference(</span><span class="s3">&quot;Users&quot;</span><span class="s1">);</span>
+
+        <span class="s0">final </span><span class="s1">DataSnapshot dataSnapshot;</span>
+
+        <span class="s1">auth = FirebaseAuth.getInstance();</span>
+
+      <span class="s2">//  currentUId=auth.getCurrentUser().getUid();</span>
+
+
+        <span class="s1">btns.setOnClickListener(</span><span class="s0">new </span><span class="s1">View.OnClickListener()</span>
+        <span class="s1">{</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onClick(View v)</span>
+            <span class="s1">{</span>
+                <span class="s0">final </span><span class="s1">String email=editem.getText().toString();</span>
+                <span class="s0">final </span><span class="s1">String pass=editpa.getText().toString();</span>
+
+                <span class="s1">auth.signInWithEmailAndPassword(email,pass).addOnCompleteListener(LogIn.</span><span class="s0">this</span><span class="s1">, </span><span class="s0">new </span><span class="s1">OnCompleteListener&lt;AuthResult&gt;() {</span>
+                    <span class="s1">@Override</span>
+                    <span class="s0">public void </span><span class="s1">onComplete(@NonNull Task&lt;AuthResult&gt; task)</span>
+                    <span class="s1">{</span>
+                        <span class="s0">if</span><span class="s1">(task.isSuccessful())</span>
+                        <span class="s1">{</span>
+                            <span class="s1">Toast.makeText(LogIn.</span><span class="s0">this</span><span class="s1">, </span><span class="s3">&quot;You are in&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show();</span>
+
+                            <span class="s1">StaticValues.setUid(auth.getUid());</span>
+
+                            <span class="s1">reference=reference.child(auth.getUid());</span>
+
+                            <span class="s1">startActivity(</span><span class="s0">new </span><span class="s1">Intent(LogIn.</span><span class="s0">this</span><span class="s1">, DistributionListActivity.</span><span class="s0">class</span><span class="s1">));</span>
+
+                        <span class="s1">}</span>
+
+                    <span class="s1">}</span>
+                <span class="s1">}).addOnFailureListener(</span><span class="s0">new </span><span class="s1">OnFailureListener()</span>
+                <span class="s1">{</span>
+                    <span class="s1">@Override</span>
+                    <span class="s0">public void </span><span class="s1">onFailure(@NonNull Exception e)</span>
+                    <span class="s1">{</span>
+                        <span class="s1">Toast.makeText(LogIn.</span><span class="s0">this</span><span class="s1">, e.getMessage(), Toast.LENGTH_LONG).show();</span>
+                    <span class="s1">}</span>
+                <span class="s1">});</span>
+
+            <span class="s1">}</span>
+        <span class="s1">});</span>
+
+    <span class="s1">}</span>
+<span class="s1">}</span>
+</pre>
+</body>
+</html>

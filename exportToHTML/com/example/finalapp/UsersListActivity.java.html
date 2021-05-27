@@ -1,0 +1,254 @@
+<html>
+<head>
+<title>UsersListActivity.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #0033b3;}
+.s1 { color: #080808;}
+.s2 { color: #8c8c8c; font-style: italic;}
+.s3 { color: #067d17;}
+.s4 { color: #1750eb;}
+</style>
+</head>
+<body bgcolor="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+UsersListActivity.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.example.finalapp;</span>
+
+<span class="s0">import </span><span class="s1">androidx.annotation.NonNull;</span>
+<span class="s0">import </span><span class="s1">androidx.appcompat.app.AppCompatActivity;</span>
+<span class="s0">import </span><span class="s1">androidx.recyclerview.widget.LinearLayoutManager;</span>
+<span class="s0">import </span><span class="s1">androidx.recyclerview.widget.RecyclerView;</span>
+
+<span class="s0">import </span><span class="s1">android.content.Intent;</span>
+<span class="s0">import </span><span class="s1">android.os.Bundle;</span>
+<span class="s0">import </span><span class="s1">android.os.Parcelable;</span>
+<span class="s0">import </span><span class="s1">android.view.Menu;</span>
+<span class="s0">import </span><span class="s1">android.view.MenuInflater;</span>
+<span class="s0">import </span><span class="s1">android.view.MenuItem;</span>
+<span class="s0">import </span><span class="s1">android.view.View;</span>
+<span class="s0">import </span><span class="s1">android.widget.AdapterView;</span>
+<span class="s0">import </span><span class="s1">android.widget.Button;</span>
+<span class="s0">import </span><span class="s1">android.widget.EditText;</span>
+<span class="s0">import </span><span class="s1">android.widget.ListView;</span>
+<span class="s0">import </span><span class="s1">android.widget.Toast;</span>
+
+<span class="s0">import </span><span class="s1">com.google.firebase.auth.FirebaseAuth;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.DataSnapshot;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.DatabaseError;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.DatabaseReference;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.FirebaseDatabase;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.ValueEventListener;</span>
+
+<span class="s0">import </span><span class="s1">java.util.ArrayList;</span>
+<span class="s0">import </span><span class="s1">java.util.List;</span>
+
+<span class="s0">public class </span><span class="s1">UsersListActivity </span><span class="s0">extends </span><span class="s1">AppCompatActivity {</span>
+
+  <span class="s2">/*  private RecyclerView mRecyclerView; 
+    private RecyclerView.Adapter userAdapter; 
+    private RecyclerView.LayoutManager usersLayoutManager; 
+ 
+    private ArrayList&lt;UserObj&gt; resultuserList = new ArrayList&lt;UserObj&gt;(); 
+ 
+    private String cusrrentUserID;*/</span>
+
+    <span class="s0">private </span><span class="s1">EditText name;</span>
+    <span class="s0">private </span><span class="s1">ListView listView;</span>
+    <span class="s0">private </span><span class="s1">Button btnsearch;</span>
+    <span class="s0">private </span><span class="s1">ArrayList&lt;User&gt; userslist = </span><span class="s0">new </span><span class="s1">ArrayList&lt;User&gt;();</span>
+    <span class="s0">private </span><span class="s1">ArrayList&lt;User&gt; userssearched = </span><span class="s0">new </span><span class="s1">ArrayList&lt;User&gt;();</span>
+    <span class="s0">private </span><span class="s1">String namestr;</span>
+    <span class="s0">private </span><span class="s1">User userclicked = </span><span class="s0">new </span><span class="s1">User();</span>
+    <span class="s0">private </span><span class="s1">Boolean isSearched = </span><span class="s0">false</span><span class="s1">;</span>
+
+    <span class="s0">private </span><span class="s1">FirebaseDatabase db=</span><span class="s0">null</span><span class="s1">;</span>
+    <span class="s0">private </span><span class="s1">FirebaseAuth auth = </span><span class="s0">null</span><span class="s1">;</span>
+    <span class="s0">private </span><span class="s1">DatabaseReference ref=</span><span class="s0">null</span><span class="s1">;</span>
+    <span class="s0">private </span><span class="s1">String picpath=</span><span class="s3">&quot;gs://fproject-bdf8a.appspot.com&quot;</span><span class="s1">;</span>
+
+
+
+    <span class="s1">@Override</span>
+    <span class="s0">protected void </span><span class="s1">onCreate(Bundle savedInstanceState) {</span>
+        <span class="s0">super</span><span class="s1">.onCreate(savedInstanceState);</span>
+        <span class="s1">setContentView(R.layout.activity_users_list);</span>
+
+        <span class="s1">name = findViewById(R.id.editserch);</span>
+        <span class="s1">listView = findViewById(R.id.rvUsers);</span>
+        <span class="s1">btnsearch = findViewById(R.id.btnserch);</span>
+
+        <span class="s1">db = FirebaseDatabase.getInstance();</span>
+        <span class="s1">ref=db.getReference(</span><span class="s3">&quot;Users&quot;</span><span class="s1">);</span>
+
+       <span class="s2">// FirebaseDatabase dbusers = FirebaseDatabase.getInstance();</span>
+       <span class="s2">// DatabaseReference dbrefusers = dbusers.getReference().child(&quot;Users&quot;);</span>
+        <span class="s1">ref.addListenerForSingleValueEvent(</span><span class="s0">new </span><span class="s1">ValueEventListener() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onDataChange(@NonNull DataSnapshot dataSnapshot) {</span>
+                <span class="s0">for </span><span class="s1">(DataSnapshot data : dataSnapshot.getChildren())</span>
+                <span class="s1">{</span>
+                    <span class="s1">User uu = data.getValue(User.</span><span class="s0">class</span><span class="s1">);</span>
+                    <span class="s1">userslist.add(uu);</span>
+                <span class="s1">}</span>
+            <span class="s1">}</span>
+
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onCancelled(@NonNull DatabaseError databaseError) {</span>
+
+            <span class="s1">}</span>
+        <span class="s1">});</span>
+
+
+        <span class="s0">final </span><span class="s1">UsersListAdapter adapter = </span><span class="s0">new </span><span class="s1">UsersListAdapter(</span><span class="s0">this</span><span class="s1">, userslist,picpath);</span>
+        <span class="s1">listView.setAdapter(adapter);</span>
+
+        <span class="s1">btnsearch.setOnClickListener(</span><span class="s0">new </span><span class="s1">View.OnClickListener() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onClick(View v) {</span>
+
+                <span class="s1">isSearched = </span><span class="s0">true</span><span class="s1">;</span>
+                <span class="s1">namestr = name.getText().toString();</span>
+                <span class="s0">if </span><span class="s1">(namestr.equals(</span><span class="s3">&quot;&quot;</span><span class="s1">))</span>
+                    <span class="s1">Toast.makeText(UsersListActivity.</span><span class="s0">this</span><span class="s1">, </span><span class="s3">&quot;Choose name or username&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show();</span>
+
+                <span class="s0">else </span><span class="s1">{</span>
+
+                    <span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">i = </span><span class="s4">0</span><span class="s1">; i &lt; userslist.size(); i++) {</span>
+                        <span class="s1">String fname = userslist.get(i).getName();</span>
+                        <span class="s2">//String lname = userslist.get(i).getLName();</span>
+                        <span class="s1">String username = userslist.get(i).getEmail();</span>
+                        <span class="s0">if </span><span class="s1">(fname.equals(namestr) ||</span><span class="s2">/* lname.equals(namestr) ||*/ </span><span class="s1">username.equals(namestr))</span>
+                            <span class="s1">userssearched.add(userslist.get(i));</span>
+                    <span class="s1">}</span>
+
+                    <span class="s0">if </span><span class="s1">(userssearched.size() == </span><span class="s4">0</span><span class="s1">)</span>
+                        <span class="s1">Toast.makeText(UsersListActivity.</span><span class="s0">this</span><span class="s1">, </span><span class="s3">&quot;There are no users in this name&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show();</span>
+
+                    <span class="s0">else </span><span class="s1">{</span>
+                        <span class="s1">UsersListAdapter adapter3 = </span><span class="s0">new </span><span class="s1">UsersListAdapter(UsersListActivity.</span><span class="s0">this</span><span class="s1">, userssearched, picpath);</span>
+                        <span class="s1">listView.setAdapter(</span><span class="s0">null</span><span class="s1">);</span>
+                        <span class="s1">listView.setAdapter(adapter3);}</span>
+                <span class="s1">}</span>
+            <span class="s1">}</span>
+        <span class="s1">});</span>
+
+        <span class="s1">listView.setOnItemClickListener(</span><span class="s0">new </span><span class="s1">AdapterView.OnItemClickListener() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onItemClick(AdapterView&lt;?&gt; parent, View view, </span><span class="s0">int </span><span class="s1">position, </span><span class="s0">long </span><span class="s1">id) {</span>
+
+                <span class="s1">Toast.makeText(UsersListActivity.</span><span class="s0">this</span><span class="s1">,</span><span class="s3">&quot;som&quot;</span><span class="s1">+position, Toast.LENGTH_LONG).show();</span>
+
+                <span class="s0">if </span><span class="s1">(isSearched){</span>
+                    <span class="s1">userclicked = userssearched.get(position);</span>
+                    <span class="s1">Intent it=</span><span class="s0">new </span><span class="s1">Intent(UsersListActivity.</span><span class="s0">this</span><span class="s1">,Setting.</span><span class="s0">class</span><span class="s1">);</span>
+                    <span class="s1">it.putExtra(</span><span class="s3">&quot;userclicked&quot;</span><span class="s1">, (Parcelable) userclicked);</span>
+                    <span class="s1">startActivity(it);</span>
+                <span class="s1">}</span>
+
+                <span class="s0">else</span>
+                <span class="s1">{</span>
+                    <span class="s1">userclicked = userslist.get(position);</span>
+                    <span class="s1">Intent it=</span><span class="s0">new </span><span class="s1">Intent(UsersListActivity.</span><span class="s0">this</span><span class="s1">,Setting.</span><span class="s0">class</span><span class="s1">);</span>
+                    <span class="s1">it.putExtra(</span><span class="s3">&quot;userclicked&quot;</span><span class="s1">, (Parcelable) userclicked);</span>
+                    <span class="s1">Bundle b = </span><span class="s0">new </span><span class="s1">Bundle();</span>
+                    <span class="s1">b.putParcelable(</span><span class="s3">&quot;Users&quot;</span><span class="s1">, (Parcelable) userclicked);</span>
+                    <span class="s1">it.putExtras(b);</span>
+                    <span class="s1">startActivity(it);</span>
+                <span class="s1">}</span>
+            <span class="s1">}</span>
+        <span class="s1">});</span>
+
+
+
+
+
+
+
+
+     <span class="s2">/*   mRecyclerView = (RecyclerView) findViewById(R.id.rvUsers); 
+        mRecyclerView.setNestedScrollingEnabled(false); 
+        mRecyclerView.setHasFixedSize(true); 
+        usersLayoutManager = new LinearLayoutManager(UsersListActivity.this); 
+        mRecyclerView.setLayoutManager(usersLayoutManager); 
+        userAdapter = new UsersListAdapter(getDataSetMatches(), UsersListActivity.this); 
+        mRecyclerView.setAdapter(userAdapter); 
+ 
+        getUserMatchId();*/</span>
+    <span class="s1">}</span>
+
+   <span class="s2">/* private void getUserMatchId() { 
+ 
+        DatabaseReference ref= FirebaseDatabase.getInstance().getReference(&quot;Users&quot;); 
+ 
+        ref.addListenerForSingleValueEvent(new ValueEventListener() { 
+            @Override 
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) { 
+                if (dataSnapshot.exists()){ 
+                    for(DataSnapshot ds : dataSnapshot.getChildren()){ 
+ 
+                       ArrayList&lt;UserObj&gt; result = new ArrayList&lt;&gt;(); 
+ 
+                        UserObj obj = ds.getValue(UserObj.class); 
+ 
+                        result.add(obj); 
+ 
+                        UsersListAdapter usersListAdapter= new UsersListAdapter(result,UsersListActivity.this); 
+                        mRecyclerView.setAdapter(usersListAdapter); 
+ 
+                    } 
+                } 
+            } 
+ 
+            @Override 
+            public void onCancelled(@NonNull DatabaseError databaseError) { 
+ 
+            } 
+        }); 
+    } 
+ 
+    private ArrayList&lt;UserObj&gt; getDataSetMatches() { 
+        return resultuserList; 
+    }*/</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public boolean </span><span class="s1">onCreateOptionsMenu(Menu menu) {</span>
+        <span class="s1">MenuInflater inflater = getMenuInflater();</span>
+        <span class="s1">inflater.inflate(R.menu.menu, menu);</span>
+        <span class="s0">return true</span><span class="s1">;</span>
+    <span class="s1">}</span>
+    <span class="s1">@Override</span>
+    <span class="s0">public boolean </span><span class="s1">onOptionsItemSelected(MenuItem item) {</span>
+        <span class="s0">switch </span><span class="s1">(item.getItemId()) {</span>
+            <span class="s0">case </span><span class="s1">R.id.item2:</span>
+                <span class="s1">Toast.makeText(</span><span class="s0">this</span><span class="s1">, </span><span class="s3">&quot;My Profile&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show();</span>
+                <span class="s1">Intent it =</span><span class="s0">new </span><span class="s1">Intent(UsersListActivity.</span><span class="s0">this</span><span class="s1">,Setting.</span><span class="s0">class</span><span class="s1">);</span>
+                <span class="s1">startActivity(it);</span>
+                <span class="s0">return true</span><span class="s1">;</span>
+            <span class="s0">case </span><span class="s1">R.id.item3:</span>
+                <span class="s1">Toast.makeText(</span><span class="s0">this</span><span class="s1">, </span><span class="s3">&quot;Food List&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show();</span>
+                <span class="s1">Intent it2 =</span><span class="s0">new </span><span class="s1">Intent(UsersListActivity.</span><span class="s0">this</span><span class="s1">,FoodListActivity.</span><span class="s0">class</span><span class="s1">);</span>
+                <span class="s1">startActivity(it2);</span>
+                <span class="s0">return true</span><span class="s1">;</span>
+            <span class="s0">case </span><span class="s1">R.id.item4:</span>
+                <span class="s1">Toast.makeText(</span><span class="s0">this</span><span class="s1">, </span><span class="s3">&quot;Add Food&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show();</span>
+                <span class="s1">Intent it3 =</span><span class="s0">new </span><span class="s1">Intent(UsersListActivity.</span><span class="s0">this</span><span class="s1">,AddFood.</span><span class="s0">class</span><span class="s1">);</span>
+                <span class="s1">startActivity(it3);</span>
+                <span class="s0">return true</span><span class="s1">;</span>
+            <span class="s0">case </span><span class="s1">R.id.item5:</span>
+                <span class="s1">Toast.makeText(</span><span class="s0">this</span><span class="s1">, </span><span class="s3">&quot;Users List&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show();</span>
+                <span class="s1">Intent it4 =</span><span class="s0">new </span><span class="s1">Intent(UsersListActivity.</span><span class="s0">this</span><span class="s1">,UsersListActivity.</span><span class="s0">class</span><span class="s1">);</span>
+                <span class="s1">startActivity(it4);</span>
+                <span class="s0">return true</span><span class="s1">;</span>
+            <span class="s0">default</span><span class="s1">:</span>
+                <span class="s0">return super</span><span class="s1">.onOptionsItemSelected(item);</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+
+<span class="s1">}</span></pre>
+</body>
+</html>

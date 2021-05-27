@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#57CA08</color>
+    <color name="colorPrimaryDark">#57AA08</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="Green">#57CA08</color>
+    <color name="white">#FFFFFF</color>
+    <color name="Blue">#63C9FF</color>
+    <color name="linkTextColor">#C8DCE9</color>
+    <color name="black">#000000</color>
+    <color name="hintTextColor">#C8D4D6</color>
+    <color name="address">#2F7092</color>
+    <color name="followers">#0D5D98</color>
+    <color name="headings">#3797CF</color>
+    <color name="solidCircle">#AAFFFFFF</color>
+    <color name="circleBorder">#50FFFFFF</color>
+    <color name="followersBg">#65DCE5</color>
+    <color name="followingBg">#49BEFF</color>
+    <color name="grey">#E5E5E5</color>
+</resources>

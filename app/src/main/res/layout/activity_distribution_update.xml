@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DistributionUpdateActivity"
+    android:orientation="vertical">
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="195dp"
+        android:background="@drawable/grad"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/placeshowdisupdate"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="50dp"
+            android:text="place"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="60sp"
+            android:textStyle="bold">
+
+        </EditText>
+
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <TextView
+            android:layout_width="132dp"
+            android:layout_height="58dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="15sp"
+            android:layout_marginEnd="240dp"
+            android:layout_marginBottom="447dp"
+            android:text="when?"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/disdateshowdisupdate"
+            android:layout_width="164dp"
+            android:layout_height="62dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="59dp"
+            android:layout_marginBottom="442dp"
+            android:clickable="true"
+            android:gravity="center_horizontal"
+            android:text="Date"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:onClick="ShowDate"/>
+
+        <TextView
+            android:layout_width="132dp"
+            android:layout_height="58dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="15sp"
+            android:layout_marginEnd="218dp"
+            android:layout_marginBottom="345dp"
+            android:text="Start Time:"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/endTimeshowdisupdate"
+            android:layout_width="132dp"
+            android:layout_height="58dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginEnd="80dp"
+            android:layout_marginBottom="246dp"
+            android:clickable="true"
+            android:gravity="center_horizontal"
+            android:text="End Time"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:onClick="EndTime"/>
+
+        <TextView
+            android:layout_width="132dp"
+            android:layout_height="58dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="15sp"
+            android:layout_marginEnd="221dp"
+            android:layout_marginBottom="248dp"
+            android:text="End Time:"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/startTimeshowdisupdate"
+            android:layout_width="132dp"
+            android:layout_height="58dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginEnd="78dp"
+            android:layout_marginBottom="345dp"
+            android:clickable="true"
+            android:gravity="center_horizontal"
+            android:text="Start Time"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:onClick="StarTime"/>
+
+        <TextView
+            android:layout_width="132dp"
+            android:layout_height="58dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="15sp"
+            android:layout_marginEnd="221dp"
+            android:layout_marginBottom="163dp"
+            android:text="Decription:"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+
+        <EditText
+            android:id="@+id/disshowdisupdate"
+            android:layout_width="191dp"
+            android:layout_height="98dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginEnd="22dp"
+            android:layout_marginBottom="137dp"
+            android:clickable="true"
+            android:gravity="center_horizontal"
+            android:hint="Decription"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/adddishowdisupdate"
+            android:layout_width="189dp"
+            android:layout_height="58dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="106dp"
+            android:layout_marginEnd="116dp"
+            android:layout_marginBottom="65dp"
+            android:background="@drawable/hollow"
+            android:text="save"
+            android:textColor="@color/Green"/>
+
+    </RelativeLayout>
+
+</LinearLayout>

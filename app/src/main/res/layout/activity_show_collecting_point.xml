@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ShowCollectingPoint"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="195dp"
+    android:background="@drawable/grad"
+    android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/updetCollect"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:clickable="true"
+            android:layout_gravity="right"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="20dp"
+            app:srcCompat="@drawable/ic_settings" />
+
+    <TextView
+        android:id="@+id/placeshowCollect"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="30dp"
+        android:hint="place"
+        android:textColor="@color/white"
+        android:textSize="60sp"
+        android:gravity="center"
+        android:textStyle="bold">
+
+    </TextView>
+
+
+</LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <TextView
+            android:layout_width="132dp"
+            android:layout_height="58dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="15sp"
+            android:layout_marginEnd="240dp"
+            android:layout_marginBottom="447dp"
+            android:text="when?"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/disdateshowCollect"
+            android:layout_width="164dp"
+            android:layout_height="62dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="59dp"
+            android:layout_marginBottom="442dp"
+            android:clickable="true"
+            android:gravity="center_horizontal"
+            android:text="Date"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+
+        <TextView
+            android:layout_width="132dp"
+            android:layout_height="58dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="15sp"
+            android:layout_marginEnd="218dp"
+            android:layout_marginBottom="345dp"
+            android:text="Start Time:"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/endTimeshowCollect"
+            android:layout_width="132dp"
+            android:layout_height="58dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginEnd="80dp"
+            android:layout_marginBottom="246dp"
+            android:clickable="true"
+            android:gravity="center_horizontal"
+            android:text="End Time"
+            android:textColor="@color/black"
+            android:textSize="15sp"/>
+
+        <TextView
+            android:layout_width="132dp"
+            android:layout_height="58dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="15sp"
+            android:layout_marginEnd="221dp"
+            android:layout_marginBottom="248dp"
+            android:text="End Time:"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/startTimeshowCollect"
+            android:layout_width="132dp"
+            android:layout_height="58dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginEnd="78dp"
+            android:layout_marginBottom="345dp"
+            android:clickable="true"
+            android:gravity="center_horizontal"
+            android:text="Start Time"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+
+        <TextView
+            android:layout_width="132dp"
+            android:layout_height="58dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="15sp"
+            android:layout_marginEnd="221dp"
+            android:layout_marginBottom="163dp"
+            android:text="Decription:"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/desshowCollect"
+            android:layout_width="191dp"
+            android:layout_height="98dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginEnd="22dp"
+            android:layout_marginBottom="137dp"
+            android:clickable="true"
+            android:gravity="center_horizontal"
+            android:hint="Decription"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/adddishowCollect"
+            android:layout_width="189dp"
+            android:layout_height="58dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="106dp"
+            android:layout_marginEnd="116dp"
+            android:layout_marginBottom="65dp"
+            android:background="@drawable/hollow"
+            android:text="sign me in"
+            android:textColor="@color/Green"/>
+
+    </RelativeLayout>
+
+
+
+
+
+</LinearLayout>

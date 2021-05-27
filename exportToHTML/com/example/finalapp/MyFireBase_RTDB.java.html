@@ -1,0 +1,80 @@
+<html>
+<head>
+<title>MyFireBase_RTDB.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #0033b3;}
+.s1 { color: #080808;}
+.s2 { color: #067d17;}
+</style>
+</head>
+<body bgcolor="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+MyFireBase_RTDB.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.example.finalapp;</span>
+
+<span class="s0">import </span><span class="s1">androidx.annotation.NonNull;</span>
+
+<span class="s0">import </span><span class="s1">com.google.firebase.auth.FirebaseAuth;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.DataSnapshot;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.DatabaseError;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.FirebaseDatabase;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.ValueEventListener;</span>
+
+<span class="s0">import </span><span class="s1">java.util.ArrayList;</span>
+
+<span class="s0">public class </span><span class="s1">MyFireBase_RTDB {</span>
+
+
+    <span class="s0">private static final </span><span class="s1">String ADMIN_PATH = </span><span class="s2">&quot;Admin&quot;</span><span class="s1">;</span>
+    <span class="s0">private static final </span><span class="s1">String USERS = </span><span class="s2">&quot;Users&quot;</span><span class="s1">;</span>
+    <span class="s0">private static final </span><span class="s1">String EMAIL_PATH = </span><span class="s2">&quot;email&quot;</span><span class="s1">;</span>
+    <span class="s0">private static </span><span class="s1">String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();</span>
+
+
+    <span class="s0">public interface </span><span class="s1">CallBack_DataIsReady {</span>
+        <span class="s0">void </span><span class="s1">getResult(Boolean data);</span>
+    <span class="s1">}</span>
+
+
+    <span class="s0">public static void </span><span class="s1">checkIfAdmin(</span><span class="s0">final </span><span class="s1">CallBack_DataIsReady callBack_dataIsReady) {</span>
+        <span class="s1">FirebaseDatabase.getInstance().getReference().child(ADMIN_PATH).child(EMAIL_PATH)</span>
+                <span class="s1">.addListenerForSingleValueEvent(</span><span class="s0">new </span><span class="s1">ValueEventListener() {</span>
+                    <span class="s1">@Override</span>
+                    <span class="s0">public void </span><span class="s1">onDataChange(@NonNull </span><span class="s0">final </span><span class="s1">DataSnapshot dataSnapshotAdminEmail) {</span>
+
+                        <span class="s1">FirebaseDatabase.getInstance().getReference().child(USERS).child(currentUserID).child(EMAIL_PATH).</span>
+                                <span class="s1">addListenerForSingleValueEvent(</span><span class="s0">new </span><span class="s1">ValueEventListener() {</span>
+                                    <span class="s1">@Override</span>
+                                    <span class="s0">public void </span><span class="s1">onDataChange(@NonNull DataSnapshot dataSnapshotUserEmail) {</span>
+                                        <span class="s0">if </span><span class="s1">(dataSnapshotAdminEmail.getValue().toString().equals(dataSnapshotUserEmail.getValue().toString())) {</span>
+                                            <span class="s1">callBack_dataIsReady.getResult(</span><span class="s0">true</span><span class="s1">);</span>
+                                        <span class="s1">} </span><span class="s0">else </span><span class="s1">{</span>
+                                            <span class="s1">callBack_dataIsReady.getResult(</span><span class="s0">false</span><span class="s1">);</span>
+
+                                        <span class="s1">}</span>
+                                    <span class="s1">}</span>
+
+                                    <span class="s1">@Override</span>
+                                    <span class="s0">public void </span><span class="s1">onCancelled(@NonNull DatabaseError databaseError) {</span>
+
+                                    <span class="s1">}</span>
+                                <span class="s1">});</span>
+
+
+                    <span class="s1">}</span>
+
+                    <span class="s1">@Override</span>
+                    <span class="s0">public void </span><span class="s1">onCancelled(@NonNull DatabaseError databaseError) {</span>
+
+                    <span class="s1">}</span>
+                <span class="s1">});</span>
+
+    <span class="s1">}</span>
+<span class="s1">}</span>
+</pre>
+</body>
+</html>

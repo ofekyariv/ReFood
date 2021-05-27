@@ -1,0 +1,169 @@
+<html>
+<head>
+<title>ShowFood.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #0033b3;}
+.s1 { color: #080808;}
+.s2 { color: #1750eb;}
+.s3 { color: #067d17;}
+.s4 { color: #8c8c8c; font-style: italic;}
+</style>
+</head>
+<body bgcolor="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+ShowFood.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.example.finalapp;</span>
+
+<span class="s0">import </span><span class="s1">androidx.annotation.NonNull;</span>
+<span class="s0">import </span><span class="s1">androidx.appcompat.app.AppCompatActivity;</span>
+<span class="s0">import </span><span class="s1">androidx.core.app.ActivityCompat;</span>
+<span class="s0">import </span><span class="s1">androidx.core.content.ContextCompat;</span>
+
+<span class="s0">import </span><span class="s1">android.Manifest;</span>
+<span class="s0">import </span><span class="s1">android.content.Intent;</span>
+<span class="s0">import </span><span class="s1">android.content.pm.PackageManager;</span>
+<span class="s0">import </span><span class="s1">android.net.Uri;</span>
+<span class="s0">import </span><span class="s1">android.os.Bundle;</span>
+<span class="s0">import </span><span class="s1">android.view.View;</span>
+<span class="s0">import </span><span class="s1">android.widget.Button;</span>
+<span class="s0">import </span><span class="s1">android.widget.TextView;</span>
+<span class="s0">import </span><span class="s1">android.widget.Toast;</span>
+
+<span class="s0">import </span><span class="s1">com.google.firebase.auth.FirebaseAuth;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.DataSnapshot;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.DatabaseError;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.DatabaseReference;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.FirebaseDatabase;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.ValueEventListener;</span>
+
+<span class="s0">public class </span><span class="s1">ShowFood </span><span class="s0">extends </span><span class="s1">AppCompatActivity {</span>
+
+   <span class="s0">private </span><span class="s1">DatabaseReference ref,DataRef;</span>
+
+    <span class="s0">private </span><span class="s1">TextView des;</span>
+    <span class="s0">private </span><span class="s1">TextView name;</span>
+
+    <span class="s0">private </span><span class="s1">String currentUserID;</span>
+
+    <span class="s0">private static final int </span><span class="s1">REQUEST_CALL = </span><span class="s2">1</span><span class="s1">;</span>
+    <span class="s0">private </span><span class="s1">Button mEditTextNumber;</span>
+
+    <span class="s0">private </span><span class="s1">String id, phone, userid;</span>
+
+    <span class="s1">FirebaseDatabase firebaseDatabase;</span>
+    <span class="s1">DatabaseReference databaseReferenceUser;</span>
+    <span class="s1">DatabaseReference databaseReference;</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">protected void </span><span class="s1">onCreate(Bundle savedInstanceState) {</span>
+        <span class="s0">super</span><span class="s1">.onCreate(savedInstanceState);</span>
+        <span class="s1">setContentView(R.layout.activity_show_food);</span>
+
+        <span class="s1">des=findViewById(R.id.showeditdescription);</span>
+        <span class="s1">name=findViewById(R.id.showeditFoodname);</span>
+
+        <span class="s1">mEditTextNumber = findViewById(R.id.mEditTextNumber);</span>
+
+        <span class="s1">databaseReferenceUser = firebaseDatabase.getInstance().getReference().child(</span><span class="s3">&quot;Users&quot;</span><span class="s1">);</span>
+        <span class="s1">databaseReference= firebaseDatabase.getInstance().getReference().child(</span><span class="s3">&quot;Food&quot;</span><span class="s1">);</span>
+
+
+
+        <span class="s1">id = getIntent().getStringExtra(</span><span class="s3">&quot;id&quot;</span><span class="s1">);</span>
+
+        <span class="s1">ref = FirebaseDatabase.getInstance().getReference(</span><span class="s3">&quot;Food&quot;</span><span class="s1">);</span>
+
+     <span class="s4">//   userid = ref.child(id).child(&quot;foodName&quot;).toString();</span>
+
+
+        <span class="s1">currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();</span>
+
+        <span class="s1">ref.child(id).addValueEventListener(</span><span class="s0">new </span><span class="s1">ValueEventListener() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onDataChange(@NonNull DataSnapshot dataSnapshot) {</span>
+                <span class="s0">if </span><span class="s1">(dataSnapshot.exists())</span>
+                <span class="s1">{</span>
+                    <span class="s1">String foodName=dataSnapshot.child(</span><span class="s3">&quot;foodName&quot;</span><span class="s1">).getValue().toString();</span>
+                    <span class="s1">String description=dataSnapshot.child(</span><span class="s3">&quot;description&quot;</span><span class="s1">).getValue().toString();</span>
+                    <span class="s1">userid =dataSnapshot.child(</span><span class="s3">&quot;id&quot;</span><span class="s1">).getValue().toString();</span>
+
+                    <span class="s1">name.setText(foodName);</span>
+                    <span class="s1">des.setText(description);</span>
+
+                   <span class="s1">findPhoneUser(userid);</span>
+
+
+
+
+                <span class="s1">}</span>
+            <span class="s1">}</span>
+
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onCancelled(@NonNull DatabaseError databaseError) {</span>
+
+            <span class="s1">}</span>
+        <span class="s1">});</span>
+
+      <span class="s4">//  phone =  databaseReferenceUser.child(String.valueOf(des)).child(&quot;phone&quot;).getKey().toString();</span>
+
+        <span class="s1">mEditTextNumber.setOnClickListener(</span><span class="s0">new </span><span class="s1">View.OnClickListener() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onClick(View v) {</span>
+                <span class="s1">makePhoneCall();</span>
+            <span class="s1">}</span>
+        <span class="s1">});</span>
+
+    <span class="s1">}</span>
+
+    <span class="s0">private void </span><span class="s1">makePhoneCall() {</span>
+        <span class="s1">String number = findPhoneUser(userid);</span>
+        <span class="s0">if </span><span class="s1">(number.trim().length() &gt; </span><span class="s2">0</span><span class="s1">) {</span>
+            <span class="s0">if </span><span class="s1">(ContextCompat.checkSelfPermission(ShowFood.</span><span class="s0">this</span><span class="s1">,</span>
+                    <span class="s1">Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {</span>
+                <span class="s1">ActivityCompat.requestPermissions(ShowFood.</span><span class="s0">this</span><span class="s1">,</span>
+                        <span class="s0">new </span><span class="s1">String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL);</span>
+            <span class="s1">} </span><span class="s0">else </span><span class="s1">{</span>
+                <span class="s1">String dial = </span><span class="s3">&quot;tel:&quot; </span><span class="s1">+ number;</span>
+                <span class="s1">startActivity(</span><span class="s0">new </span><span class="s1">Intent(Intent.ACTION_CALL, Uri.parse(dial)));</span>
+            <span class="s1">}</span>
+        <span class="s1">} </span><span class="s0">else </span><span class="s1">{</span>
+            <span class="s1">Toast.makeText(ShowFood.</span><span class="s0">this</span><span class="s1">, </span><span class="s3">&quot;Enter Phone Number&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show();</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public </span><span class="s1">String findPhoneUser (String idUser) {</span>
+        <span class="s1">DatabaseReference refUsers = FirebaseDatabase.getInstance().getReference(</span><span class="s3">&quot;Users&quot;</span><span class="s1">);</span>
+
+        <span class="s1">refUsers.child(idUser).addValueEventListener(</span><span class="s0">new </span><span class="s1">ValueEventListener() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onDataChange(@NonNull DataSnapshot dataSnapshot) {</span>
+                <span class="s1">String phoneOfUser = dataSnapshot.child(</span><span class="s3">&quot;phone&quot;</span><span class="s1">).getValue().toString();</span>
+
+
+
+            <span class="s1">}</span>
+
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onCancelled(@NonNull DatabaseError databaseError) {</span>
+
+            <span class="s1">}</span>
+        <span class="s1">});</span>
+        <span class="s0">return </span><span class="s1">idUser;</span>
+    <span class="s1">}</span>
+    <span class="s1">@Override</span>
+    <span class="s0">public void </span><span class="s1">onRequestPermissionsResult(</span><span class="s0">int </span><span class="s1">requestCode, @NonNull String[] permissions, @NonNull </span><span class="s0">int</span><span class="s1">[] grantResults) {</span>
+        <span class="s0">if </span><span class="s1">(requestCode == REQUEST_CALL) {</span>
+            <span class="s0">if </span><span class="s1">(grantResults.length &gt; </span><span class="s2">0 </span><span class="s1">&amp;&amp; grantResults[</span><span class="s2">0</span><span class="s1">] == PackageManager.PERMISSION_GRANTED) {</span>
+                <span class="s1">makePhoneCall();</span>
+            <span class="s1">} </span><span class="s0">else </span><span class="s1">{</span>
+                <span class="s1">Toast.makeText(</span><span class="s0">this</span><span class="s1">, </span><span class="s3">&quot;Permission DENIED&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show();</span>
+            <span class="s1">}</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+<span class="s1">}</span></pre>
+</body>
+</html>

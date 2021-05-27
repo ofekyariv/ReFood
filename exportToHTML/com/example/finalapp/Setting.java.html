@@ -1,0 +1,293 @@
+<html>
+<head>
+<title>Setting.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #0033b3;}
+.s1 { color: #080808;}
+.s2 { color: #067d17;}
+.s3 { color: #8c8c8c; font-style: italic;}
+.s4 { color: #1750eb;}
+</style>
+</head>
+<body bgcolor="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Setting.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.example.finalapp;</span>
+
+<span class="s0">import </span><span class="s1">androidx.annotation.NonNull;</span>
+<span class="s0">import </span><span class="s1">androidx.appcompat.app.AppCompatActivity;</span>
+
+<span class="s0">import </span><span class="s1">android.app.Activity;</span>
+<span class="s0">import </span><span class="s1">android.content.Intent;</span>
+<span class="s0">import </span><span class="s1">android.content.IntentFilter;</span>
+<span class="s0">import </span><span class="s1">android.graphics.Bitmap;</span>
+<span class="s0">import </span><span class="s1">android.net.Uri;</span>
+<span class="s0">import </span><span class="s1">android.os.Bundle;</span>
+<span class="s0">import </span><span class="s1">android.provider.MediaStore;</span>
+<span class="s0">import </span><span class="s1">android.view.Menu;</span>
+<span class="s0">import </span><span class="s1">android.view.MenuInflater;</span>
+<span class="s0">import </span><span class="s1">android.view.MenuItem;</span>
+<span class="s0">import </span><span class="s1">android.view.View;</span>
+<span class="s0">import </span><span class="s1">android.widget.Button;</span>
+<span class="s0">import </span><span class="s1">android.widget.EditText;</span>
+<span class="s0">import </span><span class="s1">android.widget.ImageView;</span>
+<span class="s0">import </span><span class="s1">android.widget.TextView;</span>
+<span class="s0">import </span><span class="s1">android.widget.Toast;</span>
+
+<span class="s0">import </span><span class="s1">com.bumptech.glide.Glide;</span>
+<span class="s0">import </span><span class="s1">com.google.android.gms.tasks.OnFailureListener;</span>
+<span class="s0">import </span><span class="s1">com.google.android.gms.tasks.OnSuccessListener;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.auth.FirebaseAuth;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.DataSnapshot;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.DatabaseError;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.DatabaseReference;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.FirebaseDatabase;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.ValueEventListener;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.storage.FirebaseStorage;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.storage.StorageReference;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.storage.UploadTask;</span>
+
+<span class="s0">import </span><span class="s1">java.io.ByteArrayOutputStream;</span>
+<span class="s0">import </span><span class="s1">java.io.IOException;</span>
+<span class="s0">import </span><span class="s1">java.util.ArrayList;</span>
+<span class="s0">import </span><span class="s1">java.util.HashMap;</span>
+<span class="s0">import </span><span class="s1">java.util.Map;</span>
+
+<span class="s0">public class </span><span class="s1">Setting </span><span class="s0">extends </span><span class="s1">AppCompatActivity {</span>
+
+    <span class="s0">private </span><span class="s1">EditText mNameField, mPhoneField;</span>
+
+    <span class="s0">private </span><span class="s1">TextView memail, tv;</span>
+
+    <span class="s0">private </span><span class="s1">Button mBack, mConfirm, mLogout;</span>
+
+    <span class="s0">private </span><span class="s1">ImageView mProfileImage;</span>
+
+    <span class="s0">private </span><span class="s1">FirebaseAuth mAuth;</span>
+    <span class="s0">private </span><span class="s1">DatabaseReference mUserDatabase;</span>
+
+    <span class="s0">private </span><span class="s1">String userId, name, phone, profileImageUrl, userSex, email;</span>
+
+    <span class="s0">private </span><span class="s1">Uri resultUri;</span>
+
+    <span class="s1">BatteryReceiver batteryReceiver;</span>
+
+
+    <span class="s1">@Override</span>
+    <span class="s0">protected void </span><span class="s1">onCreate(Bundle savedInstanceState) {</span>
+        <span class="s0">super</span><span class="s1">.onCreate(savedInstanceState);</span>
+        <span class="s1">setContentView(R.layout.activity_setting);</span>
+
+        <span class="s1">tv=findViewById(R.id.tv);</span>
+        <span class="s1">batteryReceiver =</span><span class="s0">new </span><span class="s1">BatteryReceiver(tv);</span>
+
+        <span class="s1">registerReceiver(batteryReceiver, </span><span class="s0">new </span><span class="s1">IntentFilter(Intent.ACTION_BATTERY_CHANGED));</span>
+
+
+        <span class="s1">mNameField = (EditText) findViewById(R.id.name);</span>
+        <span class="s1">mPhoneField = (EditText) findViewById(R.id.phone);</span>
+        <span class="s1">memail = (TextView) findViewById(R.id.email);</span>
+
+        <span class="s1">mProfileImage = (ImageView) findViewById(R.id.profileImage);</span>
+
+        <span class="s1">mConfirm = (Button) findViewById(R.id.confirm);</span>
+        <span class="s1">mLogout=(Button) findViewById(R.id.LogOut);</span>
+
+        <span class="s1">mAuth = FirebaseAuth.getInstance();</span>
+        <span class="s1">userId = mAuth.getCurrentUser().getUid();</span>
+
+        <span class="s1">mUserDatabase = FirebaseDatabase.getInstance().getReference().child(</span><span class="s2">&quot;Users&quot;</span><span class="s1">).child(userId);</span>
+
+        <span class="s1">getUserInfo();</span>
+
+        <span class="s1">mProfileImage.setOnClickListener(</span><span class="s0">new </span><span class="s1">View.OnClickListener() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onClick(View view) {</span>
+                <span class="s1">Intent intent = </span><span class="s0">new </span><span class="s1">Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);</span>
+                <span class="s3">//intent.setType(&quot;pics/&quot;);</span>
+                <span class="s1">startActivityForResult(intent, </span><span class="s4">1</span><span class="s1">);</span>
+            <span class="s1">}</span>
+        <span class="s1">});</span>
+        <span class="s1">mConfirm.setOnClickListener(</span><span class="s0">new </span><span class="s1">View.OnClickListener() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onClick(View view) {</span>
+                <span class="s1">saveUserInformation();</span>
+            <span class="s1">}</span>
+        <span class="s1">});</span>
+      <span class="s3">/*  mBack.setOnClickListener(new View.OnClickListener() { 
+            @Override 
+            public void onClick(View view) { 
+                finish(); 
+                return; 
+            } 
+        });*/</span>
+
+        <span class="s1">mLogout.setOnClickListener(</span><span class="s0">new </span><span class="s1">View.OnClickListener() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onClick(View v) {</span>
+                <span class="s1">logot();</span>
+
+            <span class="s1">}</span>
+        <span class="s1">});</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">protected void </span><span class="s1">onStop() {</span>
+        <span class="s0">super</span><span class="s1">.onStop();</span>
+
+        <span class="s1">unregisterReceiver(batteryReceiver);</span>
+    <span class="s1">}</span>
+
+    <span class="s0">private void </span><span class="s1">getUserInfo() {</span>
+        <span class="s1">mUserDatabase.addListenerForSingleValueEvent(</span><span class="s0">new </span><span class="s1">ValueEventListener() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onDataChange(DataSnapshot dataSnapshot) {</span>
+                <span class="s0">if </span><span class="s1">(dataSnapshot.exists() &amp;&amp; dataSnapshot.getChildrenCount() &gt; </span><span class="s4">0</span><span class="s1">) {</span>
+                    <span class="s1">Map&lt;String, Object&gt; map = (Map&lt;String, Object&gt;) dataSnapshot.getValue();</span>
+                    <span class="s0">if </span><span class="s1">(map.get(</span><span class="s2">&quot;name&quot;</span><span class="s1">) != </span><span class="s0">null</span><span class="s1">) {</span>
+                        <span class="s1">name = map.get(</span><span class="s2">&quot;name&quot;</span><span class="s1">).toString();</span>
+                        <span class="s1">mNameField.setText(name);</span>
+                    <span class="s1">}</span>
+                    <span class="s0">if </span><span class="s1">(map.get(</span><span class="s2">&quot;phone&quot;</span><span class="s1">) != </span><span class="s0">null</span><span class="s1">) {</span>
+                        <span class="s1">phone = map.get(</span><span class="s2">&quot;phone&quot;</span><span class="s1">).toString();</span>
+                        <span class="s1">mPhoneField.setText(phone);</span>
+                    <span class="s1">}</span>
+                    <span class="s0">if </span><span class="s1">(map.get(</span><span class="s2">&quot;sex&quot;</span><span class="s1">) != </span><span class="s0">null</span><span class="s1">) {</span>
+                        <span class="s1">userSex = map.get(</span><span class="s2">&quot;sex&quot;</span><span class="s1">).toString();</span>
+                    <span class="s1">}</span>
+                    <span class="s1">Glide.with(mProfileImage);</span>
+                    <span class="s0">if </span><span class="s1">(map.get(</span><span class="s2">&quot;pic&quot;</span><span class="s1">) != </span><span class="s0">null</span><span class="s1">) {</span>
+                        <span class="s1">profileImageUrl = map.get(</span><span class="s2">&quot;pic&quot;</span><span class="s1">).toString();</span>
+                        <span class="s1">Glide.with(getApplication()).load(profileImageUrl).into(mProfileImage);</span>
+                    <span class="s1">}</span>
+                    <span class="s0">if </span><span class="s1">(map.get(</span><span class="s2">&quot;email&quot;</span><span class="s1">) != </span><span class="s0">null</span><span class="s1">) {</span>
+                        <span class="s1">email = map.get(</span><span class="s2">&quot;email&quot;</span><span class="s1">).toString();</span>
+                        <span class="s1">memail.setText(email);</span>
+                    <span class="s1">}</span>
+                <span class="s1">}</span>
+            <span class="s1">}</span>
+
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onCancelled(DatabaseError databaseError) {</span>
+
+            <span class="s1">}</span>
+        <span class="s1">});</span>
+
+    <span class="s1">}</span>
+
+    <span class="s0">private void </span><span class="s1">saveUserInformation() {</span>
+        <span class="s1">name = mNameField.getText().toString();</span>
+        <span class="s1">phone = mPhoneField.getText().toString();</span>
+
+        <span class="s1">Map userInfo = </span><span class="s0">new </span><span class="s1">HashMap();</span>
+        <span class="s1">userInfo.put(</span><span class="s2">&quot;name&quot;</span><span class="s1">, name);</span>
+        <span class="s1">userInfo.put(</span><span class="s2">&quot;phone&quot;</span><span class="s1">, phone);</span>
+        <span class="s1">mUserDatabase.updateChildren(userInfo);</span>
+        <span class="s0">if </span><span class="s1">(resultUri != </span><span class="s0">null</span><span class="s1">) {</span>
+            <span class="s0">final </span><span class="s1">StorageReference filepath = FirebaseStorage.getInstance().getReference().child(</span><span class="s2">&quot;pic&quot;</span><span class="s1">).child(userId);</span>
+            <span class="s1">Bitmap bitmap = </span><span class="s0">null</span><span class="s1">;</span>
+
+            <span class="s0">try </span><span class="s1">{</span>
+                <span class="s1">bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(), resultUri);</span>
+            <span class="s1">} </span><span class="s0">catch </span><span class="s1">(IOException e) {</span>
+                <span class="s1">e.printStackTrace();</span>
+            <span class="s1">}</span>
+
+            <span class="s1">ByteArrayOutputStream baos = </span><span class="s0">new </span><span class="s1">ByteArrayOutputStream();</span>
+            <span class="s1">bitmap.compress(Bitmap.CompressFormat.JPEG, </span><span class="s4">20</span><span class="s1">, baos);</span>
+            <span class="s0">byte</span><span class="s1">[] data = baos.toByteArray();</span>
+            <span class="s1">UploadTask uploadTask = filepath.putBytes(data);</span>
+            <span class="s1">uploadTask.addOnFailureListener(</span><span class="s0">new </span><span class="s1">OnFailureListener() {</span>
+                <span class="s1">@Override</span>
+                <span class="s0">public void </span><span class="s1">onFailure(@NonNull Exception e) {</span>
+                    <span class="s1">finish();</span>
+                <span class="s1">}</span>
+            <span class="s1">});</span>
+            <span class="s1">uploadTask.addOnSuccessListener(</span><span class="s0">new </span><span class="s1">OnSuccessListener&lt;UploadTask.TaskSnapshot&gt;() {</span>
+                <span class="s1">@Override</span>
+                <span class="s0">public void </span><span class="s1">onSuccess(UploadTask.TaskSnapshot taskSnapshot) {</span>
+                    <span class="s1">filepath.getDownloadUrl().addOnSuccessListener(</span><span class="s0">new </span><span class="s1">OnSuccessListener&lt;Uri&gt;() {</span>
+                        <span class="s1">@Override</span>
+                        <span class="s0">public void </span><span class="s1">onSuccess(Uri uri) {</span>
+
+                            <span class="s1">Map newImage = </span><span class="s0">new </span><span class="s1">HashMap();</span>
+                            <span class="s1">newImage.put(</span><span class="s2">&quot;pic&quot;</span><span class="s1">, uri.toString());</span>
+                            <span class="s1">mUserDatabase.updateChildren(newImage);</span>
+
+                            <span class="s1">finish();</span>
+                            <span class="s0">return</span><span class="s1">;</span>
+
+                        <span class="s1">}</span>
+                    <span class="s1">}).addOnFailureListener(</span><span class="s0">new </span><span class="s1">OnFailureListener() {</span>
+                        <span class="s1">@Override</span>
+                        <span class="s0">public void </span><span class="s1">onFailure(@NonNull Exception e) {</span>
+
+                            <span class="s1">finish();</span>
+                            <span class="s0">return</span><span class="s1">;</span>
+
+                        <span class="s1">}</span>
+                    <span class="s1">});</span>
+                <span class="s1">}</span>
+            <span class="s1">});</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">protected void </span><span class="s1">onActivityResult(</span><span class="s0">int </span><span class="s1">requestCode, </span><span class="s0">int </span><span class="s1">resultCode, Intent data) {</span>
+        <span class="s0">super</span><span class="s1">.onActivityResult(requestCode, resultCode, data);</span>
+        <span class="s0">if </span><span class="s1">(requestCode == </span><span class="s4">1 </span><span class="s1">&amp;&amp; resultCode == Activity.RESULT_OK) {</span>
+            <span class="s0">final </span><span class="s1">Uri imageUri = data.getData();</span>
+            <span class="s1">resultUri = imageUri;</span>
+            <span class="s1">mProfileImage.setImageURI(resultUri);</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public void </span><span class="s1">logot(){</span>
+        <span class="s1">StaticValues.setUser(</span><span class="s0">null</span><span class="s1">);</span>
+        <span class="s1">StaticValues.setUid(</span><span class="s2">&quot;&quot;</span><span class="s1">);</span>
+        <span class="s1">StaticValues.setList(</span><span class="s0">new </span><span class="s1">ArrayList&lt;User&gt;());</span>
+        <span class="s1">Intent it =</span><span class="s0">new </span><span class="s1">Intent(Setting.</span><span class="s0">this</span><span class="s1">,MainActivity.</span><span class="s0">class</span><span class="s1">);</span>
+        <span class="s1">startActivity(it);</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public boolean </span><span class="s1">onCreateOptionsMenu(Menu menu) {</span>
+        <span class="s1">MenuInflater inflater = getMenuInflater();</span>
+        <span class="s1">inflater.inflate(R.menu.menu, menu);</span>
+        <span class="s0">return true</span><span class="s1">;</span>
+    <span class="s1">}</span>
+    <span class="s1">@Override</span>
+    <span class="s0">public boolean </span><span class="s1">onOptionsItemSelected(MenuItem item) {</span>
+        <span class="s0">switch </span><span class="s1">(item.getItemId()) {</span>
+            <span class="s0">case </span><span class="s1">R.id.item2:</span>
+                <span class="s1">Toast.makeText(</span><span class="s0">this</span><span class="s1">, </span><span class="s2">&quot;My Profile&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show();</span>
+                <span class="s1">Intent it =</span><span class="s0">new </span><span class="s1">Intent(Setting.</span><span class="s0">this</span><span class="s1">,Setting.</span><span class="s0">class</span><span class="s1">);</span>
+                <span class="s1">startActivity(it);</span>
+                <span class="s0">return true</span><span class="s1">;</span>
+            <span class="s0">case </span><span class="s1">R.id.item3:</span>
+                <span class="s1">Toast.makeText(</span><span class="s0">this</span><span class="s1">, </span><span class="s2">&quot;Food List&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show();</span>
+                <span class="s1">Intent it2 =</span><span class="s0">new </span><span class="s1">Intent(Setting.</span><span class="s0">this</span><span class="s1">,FoodListActivity.</span><span class="s0">class</span><span class="s1">);</span>
+                <span class="s1">startActivity(it2);</span>
+                <span class="s0">return true</span><span class="s1">;</span>
+            <span class="s0">case </span><span class="s1">R.id.item4:</span>
+                <span class="s1">Toast.makeText(</span><span class="s0">this</span><span class="s1">, </span><span class="s2">&quot;Add Food&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show();</span>
+                <span class="s1">Intent it3 =</span><span class="s0">new </span><span class="s1">Intent(Setting.</span><span class="s0">this</span><span class="s1">,AddFood.</span><span class="s0">class</span><span class="s1">);</span>
+                <span class="s1">startActivity(it3);</span>
+                <span class="s0">return true</span><span class="s1">;</span>
+            <span class="s0">case </span><span class="s1">R.id.item5:</span>
+                <span class="s1">Toast.makeText(</span><span class="s0">this</span><span class="s1">, </span><span class="s2">&quot;Users List&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show();</span>
+                <span class="s1">Intent it4 =</span><span class="s0">new </span><span class="s1">Intent(Setting.</span><span class="s0">this</span><span class="s1">,UsersListActivity.</span><span class="s0">class</span><span class="s1">);</span>
+                <span class="s1">startActivity(it4);</span>
+                <span class="s0">return true</span><span class="s1">;</span>
+            <span class="s0">default</span><span class="s1">:</span>
+                <span class="s0">return super</span><span class="s1">.onOptionsItemSelected(item);</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+<span class="s1">}</span></pre>
+</body>
+</html>

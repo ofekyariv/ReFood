@@ -1,0 +1,229 @@
+<html>
+<head>
+<title>AddDiscrabution.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #0033b3;}
+.s1 { color: #080808;}
+.s2 { color: #067d17;}
+.s3 { color: #8c8c8c; font-style: italic;}
+.s4 { color: #1750eb;}
+</style>
+</head>
+<body bgcolor="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+AddDiscrabution.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.example.finalapp;</span>
+
+<span class="s0">import </span><span class="s1">androidx.appcompat.app.AppCompatActivity;</span>
+
+<span class="s0">import </span><span class="s1">android.app.DatePickerDialog;</span>
+<span class="s0">import </span><span class="s1">android.app.ProgressDialog;</span>
+<span class="s0">import </span><span class="s1">android.app.TimePickerDialog;</span>
+<span class="s0">import </span><span class="s1">android.content.Intent;</span>
+<span class="s0">import </span><span class="s1">android.os.Bundle;</span>
+<span class="s0">import </span><span class="s1">android.view.Menu;</span>
+<span class="s0">import </span><span class="s1">android.view.MenuInflater;</span>
+<span class="s0">import </span><span class="s1">android.view.MenuItem;</span>
+<span class="s0">import </span><span class="s1">android.view.View;</span>
+<span class="s0">import </span><span class="s1">android.widget.Button;</span>
+<span class="s0">import </span><span class="s1">android.widget.DatePicker;</span>
+<span class="s0">import </span><span class="s1">android.widget.TextView;</span>
+<span class="s0">import </span><span class="s1">android.widget.TimePicker;</span>
+<span class="s0">import </span><span class="s1">android.widget.Toast;</span>
+
+<span class="s0">import </span><span class="s1">com.google.firebase.auth.FirebaseAuth;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.DatabaseReference;</span>
+<span class="s0">import </span><span class="s1">com.google.firebase.database.FirebaseDatabase;</span>
+
+<span class="s0">import </span><span class="s1">java.text.SimpleDateFormat;</span>
+<span class="s0">import </span><span class="s1">java.util.Calendar;</span>
+
+<span class="s0">public class </span><span class="s1">AddDiscrabution </span><span class="s0">extends </span><span class="s1">AppCompatActivity {</span>
+
+
+    <span class="s0">private </span><span class="s1">TextView  start, end, place, date;</span>
+
+    <span class="s0">private </span><span class="s1">Button btnsave;</span>
+
+    <span class="s0">private </span><span class="s1">DatePickerDialog pickerDialog;</span>
+    <span class="s0">private </span><span class="s1">Calendar c = </span><span class="s0">null</span><span class="s1">;</span>
+
+    <span class="s0">private  int </span><span class="s1">t1Hour, t1Minute,t2Hour,t2Minute;</span>
+
+    <span class="s0">private </span><span class="s1">ProgressDialog dialog;</span>
+    <span class="s0">private </span><span class="s1">ProgressDialog dialogpic;</span>
+
+    <span class="s0">private </span><span class="s1">FirebaseDatabase db=</span><span class="s0">null</span><span class="s1">;</span>
+    <span class="s0">private </span><span class="s1">FirebaseAuth auth = </span><span class="s0">null</span><span class="s1">;</span>
+    <span class="s0">private </span><span class="s1">DatabaseReference ref=</span><span class="s0">null</span><span class="s1">;</span>
+
+    <span class="s0">private </span><span class="s1">ProgressDialog prg =</span><span class="s0">null</span><span class="s1">;</span>
+
+    <span class="s0">private </span><span class="s1">String currentUserID;</span>
+    <span class="s0">private </span><span class="s1">DatabaseReference mDatabaseUser;</span>
+
+    <span class="s0">private </span><span class="s1">FirebaseDatabase firebaseDatabase;</span>
+    <span class="s0">private </span><span class="s1">DatabaseReference databaseReference;</span>
+    <span class="s0">private </span><span class="s1">DatabaseReference databaseReferenceUser;</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">protected void </span><span class="s1">onCreate(Bundle savedInstanceState) {</span>
+        <span class="s0">super</span><span class="s1">.onCreate(savedInstanceState);</span>
+        <span class="s1">setContentView(R.layout.activity_add_discrabution);</span>
+
+        <span class="s1">db = FirebaseDatabase.getInstance();</span>
+        <span class="s1">ref=db.getReference(</span><span class="s2">&quot;Distribution&quot;</span><span class="s1">);</span>
+
+        <span class="s1">databaseReference = firebaseDatabase.getInstance().getReference().child(</span><span class="s2">&quot;Distribution&quot;</span><span class="s1">);</span>
+        <span class="s1">databaseReferenceUser = firebaseDatabase.getInstance().getReference().child(</span><span class="s2">&quot;Users&quot;</span><span class="s1">);</span>
+
+        <span class="s1">prg=</span><span class="s0">new </span><span class="s1">ProgressDialog(</span><span class="s0">this</span><span class="s1">);</span>
+        <span class="s1">prg.setTitle(</span><span class="s2">&quot;Registration Data&quot;</span><span class="s1">);</span>
+        <span class="s1">prg.setMessage(</span><span class="s2">&quot;Saving Data&quot;</span><span class="s1">);</span>
+        <span class="s1">prg.setProgressStyle(ProgressDialog.STYLE_SPINNER);</span>
+        <span class="s1">prg.setCancelable(</span><span class="s0">false</span><span class="s1">);</span>
+
+        <span class="s1">btnsave=findViewById(R.id.adddi);</span>
+        <span class="s1">end =findViewById(R.id.endTime);</span>
+        <span class="s1">start =findViewById(R.id.startTime);</span>
+        <span class="s1">place=findViewById(R.id.place);</span>
+        <span class="s1">date=findViewById(R.id.disdate);</span>
+
+        <span class="s1">currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();</span>
+
+        <span class="s1">SimpleDateFormat sdf = </span><span class="s0">new </span><span class="s1">SimpleDateFormat(</span><span class="s2">&quot;dd/MM/yyyy&quot;</span><span class="s1">);</span>
+        <span class="s1">c = Calendar.getInstance();</span>
+
+
+        <span class="s1">btnsave.setOnClickListener(</span><span class="s0">new </span><span class="s1">View.OnClickListener() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onClick(View v) {</span>
+
+                <span class="s1">String endTime = end.getText().toString();</span>
+                <span class="s1">String startTime = start.getText().toString();</span>
+                <span class="s1">String place1 = place.getText().toString();</span>
+                <span class="s1">String date1 = date.getText().toString();</span>
+                <span class="s1">String des = date.getText().toString();</span>
+
+                <span class="s1">String id = databaseReference.push().getKey();</span>
+
+                <span class="s1">Discarabution discarabution = </span><span class="s0">new </span><span class="s1">Discarabution(endTime, startTime, place1,date1, des);</span>
+                <span class="s1">databaseReference.child(id).setValue(discarabution);</span>
+                <span class="s3">//addToUser();</span>
+
+                <span class="s1">Intent i = </span><span class="s0">new </span><span class="s1">Intent(AddDiscrabution.</span><span class="s0">this</span><span class="s1">, DistributionListActivity.</span><span class="s0">class</span><span class="s1">);</span>
+                <span class="s1">Bundle b = </span><span class="s0">new </span><span class="s1">Bundle();</span>
+                <span class="s1">b.putString(</span><span class="s2">&quot;id&quot;</span><span class="s1">, id);</span>
+                <span class="s1">i.putExtras(b);</span>
+                <span class="s1">AddDiscrabution.</span><span class="s0">this</span><span class="s1">.startActivity(i);</span>
+
+            <span class="s1">}</span>
+        <span class="s1">});</span>
+    <span class="s1">}</span>
+
+
+    <span class="s0">public void </span><span class="s1">StarTime(View view) {</span>
+
+        <span class="s1">TimePickerDialog timePickerDialog=</span><span class="s0">new </span><span class="s1">TimePickerDialog(AddDiscrabution.</span><span class="s0">this</span><span class="s1">, </span><span class="s0">new </span><span class="s1">TimePickerDialog.OnTimeSetListener() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onTimeSet(TimePicker view, </span><span class="s0">int </span><span class="s1">hourOfDay, </span><span class="s0">int </span><span class="s1">minute) {</span>
+
+                <span class="s1">t1Hour=hourOfDay;</span>
+                <span class="s1">t1Minute=minute;</span>
+                <span class="s1">Calendar calendar=Calendar.getInstance();</span>
+                <span class="s1">calendar.set(</span><span class="s4">0</span><span class="s1">,</span><span class="s4">0</span><span class="s1">,</span><span class="s4">0</span><span class="s1">,t1Hour,t1Minute);</span>
+                <span class="s1">start.setText(t1Hour + </span><span class="s2">&quot;:&quot; </span><span class="s1">+ t1Minute);</span>
+
+            <span class="s1">}</span>
+        <span class="s1">},</span><span class="s4">12</span><span class="s1">,</span><span class="s4">0</span><span class="s1">,</span><span class="s0">false</span><span class="s1">);</span>
+        <span class="s1">timePickerDialog.updateTime(t1Hour,t1Minute);</span>
+        <span class="s1">timePickerDialog.show();</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public void </span><span class="s1">EndTime(View view) {</span>
+
+        <span class="s1">TimePickerDialog timePickerDialog=</span><span class="s0">new </span><span class="s1">TimePickerDialog(AddDiscrabution.</span><span class="s0">this</span><span class="s1">, </span><span class="s0">new </span><span class="s1">TimePickerDialog.OnTimeSetListener() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onTimeSet(TimePicker view, </span><span class="s0">int </span><span class="s1">hourOfDay, </span><span class="s0">int </span><span class="s1">minute) {</span>
+
+                <span class="s1">t2Hour=hourOfDay;</span>
+                <span class="s1">t2Minute=minute;</span>
+                <span class="s1">Calendar calendar=Calendar.getInstance();</span>
+                <span class="s1">calendar.set(</span><span class="s4">0</span><span class="s1">,</span><span class="s4">0</span><span class="s1">,</span><span class="s4">0</span><span class="s1">,t2Hour,t2Minute);</span>
+                <span class="s1">end.setText(t2Hour + </span><span class="s2">&quot;:&quot; </span><span class="s1">+ t2Minute);</span>
+
+            <span class="s1">}</span>
+        <span class="s1">},</span><span class="s4">12</span><span class="s1">,</span><span class="s4">0</span><span class="s1">,</span><span class="s0">false</span><span class="s1">);</span>
+        <span class="s1">timePickerDialog.updateTime(t2Hour,t2Minute);</span>
+        <span class="s1">timePickerDialog.show();</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public void </span><span class="s1">ShowDate(View view) {</span>
+
+        <span class="s0">final int </span><span class="s1">myday=c.get(Calendar.DAY_OF_MONTH);</span>
+        <span class="s0">int </span><span class="s1">mymonth=c.get(Calendar.MONTH);</span>
+        <span class="s0">int </span><span class="s1">myyear=c.get(Calendar.YEAR);</span>
+
+        <span class="s1">pickerDialog= </span><span class="s0">new </span><span class="s1">DatePickerDialog(AddDiscrabution.</span><span class="s0">this</span><span class="s1">, </span><span class="s0">new </span><span class="s1">DatePickerDialog.OnDateSetListener() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onDateSet(DatePicker view, </span><span class="s0">int </span><span class="s1">year, </span><span class="s0">int </span><span class="s1">month, </span><span class="s0">int </span><span class="s1">dayOfMonth) {</span>
+
+                <span class="s1">date.setText(dayOfMonth + </span><span class="s2">&quot;/&quot; </span><span class="s1">+ month+</span><span class="s4">1 </span><span class="s1">+ </span><span class="s2">&quot;/&quot; </span><span class="s1">+ year);</span>
+            <span class="s1">}</span>
+        <span class="s1">},myyear,mymonth,myday);</span>
+
+        <span class="s1">pickerDialog.show();</span>
+    <span class="s1">}</span>
+
+
+    <span class="s1">@Override</span>
+    <span class="s0">public boolean </span><span class="s1">onCreateOptionsMenu(Menu menu) {</span>
+        <span class="s1">MenuInflater inflater = getMenuInflater();</span>
+        <span class="s1">inflater.inflate(R.menu.menu, menu);</span>
+        <span class="s0">return true</span><span class="s1">;</span>
+    <span class="s1">}</span>
+    <span class="s1">@Override</span>
+    <span class="s0">public boolean </span><span class="s1">onOptionsItemSelected(MenuItem item) {</span>
+        <span class="s0">switch </span><span class="s1">(item.getItemId()) {</span>
+            <span class="s0">case </span><span class="s1">R.id.item2:</span>
+                <span class="s1">Toast.makeText(</span><span class="s0">this</span><span class="s1">, </span><span class="s2">&quot;My Profile&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show();</span>
+                <span class="s1">Intent it =</span><span class="s0">new </span><span class="s1">Intent(AddDiscrabution.</span><span class="s0">this</span><span class="s1">,Setting.</span><span class="s0">class</span><span class="s1">);</span>
+                <span class="s1">startActivity(it);</span>
+                <span class="s0">return true</span><span class="s1">;</span>
+            <span class="s0">case </span><span class="s1">R.id.item3:</span>
+                <span class="s1">Toast.makeText(</span><span class="s0">this</span><span class="s1">, </span><span class="s2">&quot;Food List&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show();</span>
+                <span class="s1">Intent it2 =</span><span class="s0">new </span><span class="s1">Intent(AddDiscrabution.</span><span class="s0">this</span><span class="s1">,FoodListActivity.</span><span class="s0">class</span><span class="s1">);</span>
+                <span class="s1">startActivity(it2);</span>
+                <span class="s0">return true</span><span class="s1">;</span>
+            <span class="s0">case </span><span class="s1">R.id.item4:</span>
+                <span class="s1">Toast.makeText(</span><span class="s0">this</span><span class="s1">, </span><span class="s2">&quot;Add Food&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show();</span>
+                <span class="s1">Intent it3 =</span><span class="s0">new </span><span class="s1">Intent(AddDiscrabution.</span><span class="s0">this</span><span class="s1">,AddFood.</span><span class="s0">class</span><span class="s1">);</span>
+                <span class="s1">startActivity(it3);</span>
+                <span class="s0">return true</span><span class="s1">;</span>
+            <span class="s0">case </span><span class="s1">R.id.item5:</span>
+                <span class="s1">Toast.makeText(</span><span class="s0">this</span><span class="s1">, </span><span class="s2">&quot;Users List&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show();</span>
+                <span class="s1">Intent it4 =</span><span class="s0">new </span><span class="s1">Intent(AddDiscrabution.</span><span class="s0">this</span><span class="s1">,UsersListActivity.</span><span class="s0">class</span><span class="s1">);</span>
+                <span class="s1">startActivity(it4);</span>
+                <span class="s0">return true</span><span class="s1">;</span>
+            <span class="s0">case </span><span class="s1">R.id.item6:</span>
+                <span class="s1">Toast.makeText(</span><span class="s0">this</span><span class="s1">, </span><span class="s2">&quot;Distribution List&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show();</span>
+                <span class="s1">Intent it5 =</span><span class="s0">new </span><span class="s1">Intent(AddDiscrabution.</span><span class="s0">this</span><span class="s1">,UsersListActivity.</span><span class="s0">class</span><span class="s1">);</span>
+                <span class="s1">startActivity(it5);</span>
+                <span class="s0">return true</span><span class="s1">;</span>
+            <span class="s0">case </span><span class="s1">R.id.item7:</span>
+                <span class="s1">Toast.makeText(</span><span class="s0">this</span><span class="s1">, </span><span class="s2">&quot;Add Distribution&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show();</span>
+                <span class="s1">Intent it6 =</span><span class="s0">new </span><span class="s1">Intent(AddDiscrabution.</span><span class="s0">this</span><span class="s1">,UsersListActivity.</span><span class="s0">class</span><span class="s1">);</span>
+                <span class="s1">startActivity(it6);</span>
+                <span class="s0">return true</span><span class="s1">;</span>
+
+            <span class="s0">default</span><span class="s1">:</span>
+                <span class="s0">return super</span><span class="s1">.onOptionsItemSelected(item);</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+<span class="s1">}</span></pre>
+</body>
+</html>
